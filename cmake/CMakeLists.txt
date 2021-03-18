@@ -9,5 +9,4 @@ add_subdirectory("HelloDrone")
 add_subdirectory("HelloCar")
 add_subdirectory("DroneShell")
 add_subdirectory("DroneServer")
-
-
+add_subdirectory("GazeboDrone")
