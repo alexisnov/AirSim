@@ -18,6 +18,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#include <gazebo/transport/transport.hh>
+#include <gazebo/msgs/msgs.hh>
+#include <gazebo/gazebo_client.hh>
 #include "common/common_utils/StrictMode.hpp"
 STRICT_MODE_OFF
 #ifndef RPCLIB_MSGPACK
@@ -29,9 +32,7 @@ STRICT_MODE_ON
 #include "vehicles/multirotor/api/MultirotorRpcLibClient.hpp"
 #include <chrono>
 
-#include <gazebo/transport/transport.hh>
-#include <gazebo/msgs/msgs.hh>
-#include <gazebo/gazebo_client.hh>
+
 
 #include <iostream>
 
