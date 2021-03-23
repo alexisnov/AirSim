@@ -51,8 +51,6 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#whats-new">What's New</a>
-    </li>
     <li class="toctree-l2"><a class="reference internal" href="#how-to-get-it">How to Get It</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a>
@@ -93,7 +91,11 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#contact">Contact</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-new">What's New</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#faq">FAQ</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-of-conduct">Code of Conduct</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
     </li>
@@ -132,6 +134,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="image_apis/">Image APIs</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="apis_cpp/">C++ APIs</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="api_docs/html/">API Reference Docs</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="dev_workflow/">Development Workflow</a>
                     </li>
@@ -181,31 +185,43 @@
                     <li class="toctree-l1"><a class="reference internal" href="hello_drone/">Hello Drone</a>
                     </li>
                 </ul>
-                <p class="caption"><span class="caption-text">MavLink and PX4</span></p>
+                <p class="caption"><span class="caption-text">External Flight Controllers</span></p>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="px4_setup/">PX4 Setup for AirSim</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">MavLink and PX4</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="px4_setup/">PX4 Setup for AirSim</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="https://youtu.be/1oY8Qu5maQQ">AirSim with Pixhawk</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="https://youtu.be/HNWdYrtw3f0">PX4 Setup with AirSim</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="https://www.youtube.com/watch?v=d_FyjKDWQfc&feature=youtu.be">Debugging Attitude Estimation</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="https://github.com/Microsoft/AirSim/wiki/Intercepting-MavLink-messages">Intercepting MavLink Messages</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="https://github.com/Microsoft/AirSim/wiki/Rapid-Descent-on-PX4-drones">Rapid Descent on PX4 Drones</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="px4_build/">Building PX4</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="px4_logging/">PX4/MavLink Logging</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="log_viewer/">MavLink LogViewer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mavlinkcom/">MavLinkCom</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="mavlinkcom_mocap/">MavLink MoCap</a>
+                </li>
+    </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="px4_sitl/">PX4 in SITL</a>
-                    </li>
-                    <li class="toctree-l1"><a class="" href="https://youtu.be/1oY8Qu5maQQ">AirSim with Pixhawk</a>
-                    </li>
-                    <li class="toctree-l1"><a class="" href="https://youtu.be/HNWdYrtw3f0">PX4 Setup with AirSim</a>
-                    </li>
-                    <li class="toctree-l1"><a class="" href="https://www.youtube.com/watch?v=d_FyjKDWQfc&feature=youtu.be">Debugging Attitude Estimation</a>
-                    </li>
-                    <li class="toctree-l1"><a class="" href="https://github.com/Microsoft/AirSim/wiki/Intercepting-MavLink-messages">Intercepting MavLink Messages</a>
-                    </li>
-                    <li class="toctree-l1"><a class="" href="https://github.com/Microsoft/AirSim/wiki/Rapid-Descent-on-PX4-drones">Rapid Descent on PX4 Drones</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="px4_build/">Building PX4</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="px4_logging/">PX4/MavLink Logging</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="log_viewer/">MavLink LogViewer</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="mavlinkcom/">MavLinkCom</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="mavlinkcom_mocap/">MavLink MoCap</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">ArduPilot</a>
+    <ul>
+                <li class="toctree-l2"><a class="" href="https://ardupilot.org/dev/docs/building-the-code.html">ArduPilot SITL Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="" href="https://ardupilot.org/dev/docs/sitl-with-airsim.html">AirSim & ArduPilot</a>
+                </li>
+    </ul>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Upgrading</span></p>
@@ -310,30 +326,15 @@
             <div class="section">
               
                 <h1 id="welcome-to-airsim">Welcome to AirSim<a class="headerlink" href="#welcome-to-airsim" title="Permanent link">#</a></h1>
-<p>AirSim is a simulator for drones, cars and more, built on <a href="https://www.unrealengine.com/">Unreal Engine</a> (we now also have an experimental <a href="https://unity3d.com/">Unity</a> release). It is open-source, cross platform, and supports hardware-in-loop with popular flight controllers such as PX4 for physically and visually realistic simulations. It is developed as an Unreal plugin that can simply be dropped into any Unreal environment. Similarly, we have an experimental release for a Unity plugin.</p>
+<p>AirSim is a simulator for drones, cars and more, built on <a href="https://www.unrealengine.com/">Unreal Engine</a> (we now also have an experimental <a href="https://unity3d.com/">Unity</a> release). It is open-source, cross platform, and supports software-in-the-loop simulation with popular flight controllers such as PX4 &amp; ArduPilot and hardware-in-loop with PX4 for physically and visually realistic simulations. It is developed as an Unreal plugin that can simply be dropped into any Unreal environment. Similarly, we have an experimental release for a Unity plugin.</p>
 <p>Our goal is to develop AirSim as a platform for AI research to experiment with deep learning, computer vision and reinforcement learning algorithms for autonomous vehicles. For this purpose, AirSim also exposes APIs to retrieve data and control vehicles in a platform independent way.</p>
 <p><strong>Check out the quick 1.5 minute demo</strong></p>
 <p>Drones in AirSim</p>
 <p><a href="https://youtu.be/-WfTr1-OBGQ"><img alt="AirSim Drone Demo Video" src="images/demo_video.png" /></a></p>
 <p>Cars in AirSim</p>
 <p><a href="https://youtu.be/gnz1X3UNM5Y"><img alt="AirSim Car Demo Video" src="images/car_demo_video.png" /></a></p>
-<h2 id="whats-new">What's New<a class="headerlink" href="#whats-new" title="Permanent link">#</a></h2>
-<ul>
-<li>Latest release <code>v1.3.1</code> for <a href="https://github.com/microsoft/AirSim/releases/tag/v1.3.1-windows">Windows</a> and <a href="https://github.com/microsoft/AirSim/releases/tag/v1.3.1-linux">Linux</a></li>
-<li>Upgraded to Unreal Engine 4.24, Visual Studio 2019, Clang 8, C++ 17 standard</li>
-<li>Mac OSX Catalina support</li>
-<li>Updated <a href="https://pypi.org/project/airsim/">airsim</a> Python package, with lots of new APIs</li>
-<li><a href="https://github.com/microsoft/AirSim/pull/2494">Removed legacy API wrappers</a></li>
-<li><a href="https://microsoft.github.io/AirSim/px4_setup/">Support for latest PX4 stable release</a></li>
-<li>Support for <a href="https://ardupilot.org/ardupilot/">ArduPilot</a> - <a href="https://ardupilot.org/dev/docs/sitl-with-airsim.html">Copter, Rover vehicles</a></li>
-<li><a href="https://microsoft.github.io/AirSim/Unity/">Updated Unity support</a></li>
-<li><a href="https://github.com/microsoft/AirSim/pull/2493">Removed simChar* APIs</a></li>
-<li><a href="https://github.com/microsoft/AirSim/pull/2304">Plotting APIs for Debugging</a></li>
-<li>ROS wrapper for multirotors is available. See <a href="https://microsoft.github.io/AirSim/airsim_ros_pkgs/">airsim_ros_pkgs</a> for the ROS API, and <a href="https://microsoft.github.io/AirSim/airsim_tutorial_pkgs/">airsim_tutorial_pkgs</a> for tutorials.</li>
-<li>Added support for <a href="https://microsoft.github.io/AirSim/docker_ubuntu/">docker in ubuntu</a></li>
-</ul>
-<p>For complete list of changes, view our <a href="CHANGELOG/">Changelog</a></p>
 <h2 id="how-to-get-it">How to Get It<a class="headerlink" href="#how-to-get-it" title="Permanent link">#</a></h2>
+<p><a href="https://travis-ci.org/Microsoft/AirSim"><img alt="Build Status" src="https://travis-ci.org/Microsoft/AirSim.svg?branch=master" /></a></p>
 <h3 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">#</a></h3>
 <ul>
 <li><a href="https://github.com/Microsoft/AirSim/releases">Download binaries</a></li>
@@ -348,7 +349,7 @@
 <ul>
 <li><a href="https://microsoft.github.io/AirSim/build_linux">Build it</a></li>
 </ul>
-<p><a href="https://travis-ci.org/Microsoft/AirSim"><img alt="Build Status" src="https://travis-ci.org/Microsoft/AirSim.svg?branch=master" /></a></p>
+<p>For more details, see the <a href="use_precompiled/">use precompiled binaries</a> document. </p>
 <h2 id="how-to-use-it">How to Use It<a class="headerlink" href="#how-to-use-it" title="Permanent link">#</a></h2>
 <h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">#</a></h3>
 <p>View our <a href="https://microsoft.github.io/AirSim/">detailed documentation</a> on all aspects of AirSim.</p>
@@ -377,37 +378,47 @@
 <li><a href="https://youtu.be/1oY8Qu5maQQ">Video - Setting up AirSim with Pixhawk Tutorial</a> by Chris Lovett</li>
 <li><a href="https://youtu.be/HNWdYrtw3f0">Video - Using AirSim with Pixhawk Tutorial</a> by Chris Lovett</li>
 <li><a href="https://www.youtube.com/watch?v=y09VbdQWvQY">Video - Using off-the-self environments with AirSim</a> by Jim Piavis</li>
-<li><a href="https://microsoft.github.io/AirSim/docs/reinforcement_learning">Reinforcement Learning with AirSim</a> by Ashish Kapoor</li>
+<li><a href="https://microsoft.github.io/AirSim/reinforcement_learning">Reinforcement Learning with AirSim</a> by Ashish Kapoor</li>
 <li><a href="https://aka.ms/AutonomousDrivingCookbook">The Autonomous Driving Cookbook</a> by Microsoft Deep Learning and Robotics Garage Chapter</li>
 <li><a href="https://github.com/simondlevy/AirSimTensorFlow">Using TensorFlow for simple collision avoidance</a> by Simon Levy and WLU team</li>
 </ul>
 <h2 id="participate">Participate<a class="headerlink" href="#participate" title="Permanent link">#</a></h2>
 <h3 id="paper">Paper<a class="headerlink" href="#paper" title="Permanent link">#</a></h3>
-<p>More technical details are available in <a href="https://arxiv.org/abs/1705.05065">AirSim paper (FSR 2017 Conference)</a>. Please cite this as:</p>
-<pre><code>@inproceedings{airsim2017fsr,
+<p>More technical details are available in <a href="https://arxiv.org/abs/1705.05065">AirSim paper (FSR 2017 Conference)</a>. Please cite this as:
+<pre class="highlight"><code>@inproceedings{airsim2017fsr,
   author = {Shital Shah and Debadeepta Dey and Chris Lovett and Ashish Kapoor},
   title = {AirSim: High-Fidelity Visual and Physical Simulation for Autonomous Vehicles},
   year = {2017},
   booktitle = {Field and Service Robotics},
   eprint = {arXiv:1705.05065},
   url = {https://arxiv.org/abs/1705.05065}
-}
-</code></pre>
-
+}</code></pre></p>
 <h3 id="contribute">Contribute<a class="headerlink" href="#contribute" title="Permanent link">#</a></h3>
 <p>Please take a look at <a href="https://github.com/microsoft/airsim/issues">open issues</a> if you are looking for areas to contribute to.</p>
 <ul>
 <li><a href="https://microsoft.github.io/AirSim/design">More on AirSim design</a></li>
 <li><a href="https://microsoft.github.io/AirSim/code_structure">More on code structure</a></li>
 <li><a href="CONTRIBUTING/">Contribution Guidelines</a></li>
-<li><a href="https://trello.com/b/1t2qCeaA/wishlist-by-community-for-community">Trello Board</a></li>
 </ul>
 <h3 id="who-is-using-airsim">Who is Using AirSim?<a class="headerlink" href="#who-is-using-airsim" title="Permanent link">#</a></h3>
 <p>We are maintaining a <a href="https://microsoft.github.io/AirSim/who_is_using">list</a> of a few projects, people and groups that we are aware of. If you would like to be featured in this list please <a href="https://github.com/microsoft/airsim/issues">make a request here</a>.</p>
 <h2 id="contact">Contact<a class="headerlink" href="#contact" title="Permanent link">#</a></h2>
 <p>Join the AirSim group on <a href="https://www.facebook.com/groups/1225832467530667/">Facebook</a> to stay up to date or ask any questions.</p>
+<h2 id="whats-new">What's New<a class="headerlink" href="#whats-new" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="https://github.com/microsoft/AirSim/pull/3215">Python wrapper for Open AI gym interfaces.</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/3202">Python wrapper for Event camera simulation</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/3209">Voxel grid construction</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/3039">Programmable camera distortion</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/2867">Wind simulation</a></li>
+<li><a href="https://github.com/microsoft/AirSim/pull/2816">Azure development environment with documentation</a></li>
+<li>ROS wrapper for <a href="https://github.com/microsoft/AirSim/blob/master/docs/airsim_ros_pkgs.md">multirotor</a> and <a href="https://github.com/microsoft/AirSim/pull/2743">car</a>.</li>
+</ul>
+<p>For complete list of changes, view our <a href="CHANGELOG/">Changelog</a></p>
 <h2 id="faq">FAQ<a class="headerlink" href="#faq" title="Permanent link">#</a></h2>
 <p>If you run into problems, check the <a href="https://microsoft.github.io/AirSim/faq">FAQ</a> and feel free to post issues in the  <a href="https://github.com/Microsoft/AirSim/issues">AirSim</a> repository.</p>
+<h2 id="code-of-conduct">Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Permanent link">#</a></h2>
+<p>This project has adopted the <a href="https://opensource.microsoft.com/codeofconduct/">Microsoft Open Source Code of Conduct</a>. For more information see the <a href="https://opensource.microsoft.com/codeofconduct/faq/">Code of Conduct FAQ</a> or contact <a href="mailto:opencode@microsoft.com">opencode@microsoft.com</a> with any additional questions or comments.</p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">#</a></h2>
 <p>This project is released under the MIT License. Please review the <a href="LICENSE">License file</a> for more details.</p>
               
