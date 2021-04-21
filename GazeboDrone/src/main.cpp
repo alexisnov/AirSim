@@ -37,6 +37,7 @@ STRICT_MODE_ON
 #include <iostream>
 
 constexpr int NWIDTH = 7;
+static constexpr int MESSAGE_THROTTLE = 100;
 
 using namespace msr::airlib;
 
@@ -46,10 +47,8 @@ msr::airlib::MultirotorRpcLibClient client;
 void cbLocalPose(ConstPosesStampedPtr &_msg) {
   std::cout << std::fixed;
   std::cout << std::setprecision(3);
-
+  static int count = 0;
   for ( int i = 0; i < _msg->pose_size(); i++ ) {
-	  std::cout << "local (" << std::setw(2) << i << ") ";
-    std::cout << std::left << std::setw(32) << _msg->pose(i).name();
     auto x = _msg->pose(i).position().x();
     auto y = _msg->pose(i).position().y();
     auto z = _msg->pose(i).position().z();
@@ -57,36 +56,49 @@ void cbLocalPose(ConstPosesStampedPtr &_msg) {
     auto ox = _msg->pose(i).orientation().x();
     auto oy = _msg->pose(i).orientation().y();
     auto oz = _msg->pose(i).orientation().z();
-    std::cout << " x: " << std::right << std::setw(NWIDTH) << x;
-    std::cout << " y: " << std::right << std::setw(NWIDTH) << y;
-    std::cout << " z: " << std::right << std::setw(NWIDTH) << z;
+    if(count % MESSAGE_THROTTLE == 0){
+      std::cout << "local (" << std::setw(2) << i << ") ";
+      std::cout << std::left << std::setw(32) << _msg->pose(i).name();
+      std::cout << " x: " << std::right << std::setw(NWIDTH) << x;
+      std::cout << " y: " << std::right << std::setw(NWIDTH) << y;
+      std::cout << " z: " << std::right << std::setw(NWIDTH) << z;
 
-    std::cout << " ow: " << std::right << std::setw(NWIDTH) << ow;
-    std::cout << " ox: " << std::right << std::setw(NWIDTH) << ox;
-    std::cout << " oy: " << std::right << std::setw(NWIDTH) << oy;
-    std::cout << " oz: " << std::right << std::setw(NWIDTH) << oz;
-    std::cout << std::endl;
+      std::cout << " ow: " << std::right << std::setw(NWIDTH) << ow;
+      std::cout << " ox: " << std::right << std::setw(NWIDTH) << ox;
+      std::cout << " oy: " << std::right << std::setw(NWIDTH) << oy;
+      std::cout << " oz: " << std::right << std::setw(NWIDTH) << oz;
+      std::cout << std::endl;
+    }
     if( i == _msg->pose_size()-1 ){ 
-        msr::airlib::Vector3r p;
-        msr::airlib::Quaternionr o;
-	p.x() = x;
-        p.y() = y;
-	p.z() = z;
-	o.w() = ow;
-	o.x() = ox;
-	o.y() = oy;
-	o.z() = oz;
+      msr::airlib::Vector3r p;
+      msr::airlib::Quaternionr o;
+      p.x() = x;
+            p.y() = -y;
+      p.z() = -z;
+      o.w() = ow;
+      o.x() = ox;
+      o.y() = -oy;
+      o.z() = -oz;
     	client.simSetVehiclePose(Pose(p,o), true);
     }
    
   }
+  if(count % MESSAGE_THROTTLE == 0){
+    std::cout << std::endl;
+  }
   
-  std::cout << std::endl;
+  ++count;
 }
 
 void cbGobalPose(ConstPosesStampedPtr &_msg) {
   std::cout << std::fixed;
   std::cout << std::setprecision(4);
+  static int count = 0;
+  if(count % MESSAGE_THROTTLE){
+    ++count;
+    return;
+  }
+  ++count;
 
   for ( int i = 0; i < _msg->pose_size(); i++ ) {
     std::cout << "global (" << i << ") ";
