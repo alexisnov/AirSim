@@ -368,6 +368,20 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="airsim.client.VehicleClient.getSettingsString">
+<code class="sig-name descname"><span class="pre">getSettingsString</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#VehicleClient.getSettingsString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.VehicleClient.getSettingsString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the settings text being used by AirSim</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Settings text in JSON format</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="airsim.client.VehicleClient.isApiControlEnabled">
 <code class="sig-name descname"><span class="pre">isApiControlEnabled</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#VehicleClient.isApiControlEnabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.VehicleClient.isApiControlEnabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns true if API control is established.</p>
@@ -418,6 +432,39 @@
 <code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#VehicleClient.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.VehicleClient.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the vehicle to its original starting state</p>
 <p>Note that you must call <cite>enableApiControl</cite> and <cite>armDisarm</cite> again after the call to reset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="airsim.client.VehicleClient.simAddVehicle">
+<code class="sig-name descname"><span class="pre">simAddVehicle</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pawn_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#VehicleClient.simAddVehicle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.VehicleClient.simAddVehicle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create vehicle at runtime</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vehicle_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of the vehicle being created</p></li>
+<li><p><strong>vehicle_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Type of vehicle, e.g. “simpleflight”</p></li>
+<li><p><strong>pose</strong> (<a class="reference internal" href="#airsim.types.Pose" title="airsim.types.Pose"><em>Pose</em></a>) – Initial pose of the vehicle</p></li>
+<li><p><strong>pawn_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Vehicle blueprint path, default empty wbich uses the default blueprint for the vehicle type</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether vehicle was created</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="airsim.client.VehicleClient.simContinueForFrames">
+<code class="sig-name descname"><span class="pre">simContinueForFrames</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#VehicleClient.simContinueForFrames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.VehicleClient.simContinueForFrames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Continue (or resume if paused) the simulation for the specified number of frames, after which the simulation will be paused.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frames</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Frames to run the simulation for</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -624,7 +671,8 @@ See <a class="reference external" href="https://microsoft.github.io/AirSim/image
 <dl class="py method">
 <dt id="airsim.client.VehicleClient.simGetLidarSegmentation">
 <code class="sig-name descname"><span class="pre">simGetLidarSegmentation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lidar_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#VehicleClient.simGetLidarSegmentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.VehicleClient.simGetLidarSegmentation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns Segmentation ID of each point’s collided object in the last Lidar update</p>
+<dd><p>NOTE: Deprecated API, use <cite>getLidarData()</cite> API instead
+Returns Segmentation ID of each point’s collided object in the last Lidar update</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1258,6 +1306,24 @@ so Sun will move in sky much faster</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="airsim.client.MultirotorClient.getRotorStates">
+<code class="sig-name descname"><span class="pre">getRotorStates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vehicle_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#airsim.types.RotorStates" title="airsim.types.RotorStates"><span class="pre">airsim.types.RotorStates</span></a><a class="reference internal" href="_modules/airsim/client.html#MultirotorClient.getRotorStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.MultirotorClient.getRotorStates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to obtain the current state of all a multirotor’s rotors. The state includes the speeds,
+thrusts and torques for all rotors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>vehicle_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Vehicle to get the rotor state of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Containing a timestamp and the speed, thrust and torque of all rotors.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#airsim.types.RotorStates" title="airsim.types.RotorStates">RotorStates</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="airsim.client.MultirotorClient.goHomeAsync">
 <code class="sig-name descname"><span class="pre">goHomeAsync</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3e+38</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vehicle_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#MultirotorClient.goHomeAsync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.MultirotorClient.goHomeAsync" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return vehicle to Home i.e. Launch location</p>
@@ -1743,6 +1809,30 @@ then that RC state would be ignored.</p>
 <dt id="airsim.client.MultirotorClient.moveByVelocityZAsync">
 <code class="sig-name descname"><span class="pre">moveByVelocityZAsync</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vx</span></em>, <em class="sig-param"><span class="pre">vy</span></em>, <em class="sig-param"><span class="pre">z</span></em>, <em class="sig-param"><span class="pre">duration</span></em>, <em class="sig-param"><span class="pre">drivetrain=0</span></em>, <em class="sig-param"><span class="pre">yaw_mode=&lt;YawMode&gt;</span> <span class="pre">{</span>&#160;&#160; <span class="pre">'is_rate':</span> <span class="pre">True</span></em>, <em class="sig-param"><span class="pre">'yaw_or_rate':</span> <span class="pre">0.0}</span></em>, <em class="sig-param"><span class="pre">vehicle_name=''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#MultirotorClient.moveByVelocityZAsync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.MultirotorClient.moveByVelocityZAsync" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="airsim.client.MultirotorClient.moveByVelocityZBodyFrameAsync">
+<code class="sig-name descname"><span class="pre">moveByVelocityZBodyFrameAsync</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vx</span></em>, <em class="sig-param"><span class="pre">vy</span></em>, <em class="sig-param"><span class="pre">z</span></em>, <em class="sig-param"><span class="pre">duration</span></em>, <em class="sig-param"><span class="pre">drivetrain=0</span></em>, <em class="sig-param"><span class="pre">yaw_mode=&lt;YawMode&gt;</span> <span class="pre">{</span>&#160;&#160; <span class="pre">'is_rate':</span> <span class="pre">True</span></em>, <em class="sig-param"><span class="pre">'yaw_or_rate':</span> <span class="pre">0.0}</span></em>, <em class="sig-param"><span class="pre">vehicle_name=''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airsim/client.html#MultirotorClient.moveByVelocityZBodyFrameAsync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.client.MultirotorClient.moveByVelocityZBodyFrameAsync" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – desired velocity in the X axis of the vehicle’s local NED frame</p></li>
+<li><p><strong>vy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – desired velocity in the Y axis of the vehicle’s local NED frame</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – desired Z value (in local NED frame of the vehicle)</p></li>
+<li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Desired amount of time (seconds), to send this command for</p></li>
+<li><p><strong>drivetrain</strong> (<a class="reference internal" href="#airsim.types.DrivetrainType" title="airsim.types.DrivetrainType"><em>DrivetrainType</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>yaw_mode</strong> (<a class="reference internal" href="#airsim.types.YawMode" title="airsim.types.YawMode"><em>YawMode</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>vehicle_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the multirotor to send this command to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>future. call .join() to wait for method to finish. Example: client.METHOD().join()</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>msgpackrpc.future.Future</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="airsim.client.MultirotorClient.moveOnPathAsync">
@@ -2480,8 +2570,8 @@ This function should only be called if the default position control PID gains ne
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="airsim.types.ImageType.DepthPlanner">
-<code class="sig-name descname"><span class="pre">DepthPlanner</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#airsim.types.ImageType.DepthPlanner" title="Permalink to this definition">¶</a></dt>
+<dt id="airsim.types.ImageType.DepthPlanar">
+<code class="sig-name descname"><span class="pre">DepthPlanar</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#airsim.types.ImageType.DepthPlanar" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2602,6 +2692,11 @@ This function should only be called if the default position control PID gains ne
 <dl class="py attribute">
 <dt id="airsim.types.LidarData.pose">
 <code class="sig-name descname"><span class="pre">pose</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;Pose&gt;</span> <span class="pre">{</span>&#160;&#160; <span class="pre">'orientation':</span> <span class="pre">&lt;Quaternionr&gt;</span> <span class="pre">{</span>&#160;&#160; <span class="pre">'w_val':</span> <span class="pre">1.0,</span>&#160;&#160;&#160;&#160; <span class="pre">'x_val':</span> <span class="pre">0.0,</span>&#160;&#160;&#160;&#160; <span class="pre">'y_val':</span> <span class="pre">0.0,</span>&#160;&#160;&#160;&#160; <span class="pre">'z_val':</span> <span class="pre">0.0},</span>&#160;&#160;&#160;&#160; <span class="pre">'position':</span> <span class="pre">&lt;Vector3r&gt;</span> <span class="pre">{</span>&#160;&#160; <span class="pre">'x_val':</span> <span class="pre">0.0,</span>&#160;&#160;&#160;&#160; <span class="pre">'y_val':</span> <span class="pre">0.0,</span>&#160;&#160;&#160;&#160; <span class="pre">'z_val':</span> <span class="pre">0.0}}</span></em><a class="headerlink" href="#airsim.types.LidarData.pose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="airsim.types.LidarData.segmentation">
+<code class="sig-name descname"><span class="pre">segmentation</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#airsim.types.LidarData.segmentation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -3011,6 +3106,21 @@ AngleLevel/AngleRate/Velocity/PositionControllerGains objects.</p>
 <dl class="py attribute">
 <dt id="airsim.types.RCData.yaw">
 <code class="sig-name descname"><span class="pre">yaw</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0.0</span></em><a class="headerlink" href="#airsim.types.RCData.yaw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="airsim.types.RotorStates">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">airsim.types.</span></code><code class="sig-name descname"><span class="pre">RotorStates</span></code><a class="reference internal" href="_modules/airsim/types.html#RotorStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airsim.types.RotorStates" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="airsim.types.RotorStates.rotors">
+<code class="sig-name descname"><span class="pre">rotors</span></code><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#airsim.types.RotorStates.rotors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="airsim.types.RotorStates.timestamp">
+<code class="sig-name descname"><span class="pre">timestamp</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#airsim.types.RotorStates.timestamp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

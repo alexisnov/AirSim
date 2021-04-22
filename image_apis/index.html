@@ -143,7 +143,7 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#available-imagetype-values">Available ImageType Values</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#depthplanner-and-depthperspective">DepthPlanner and DepthPerspective</a>
+    <li class="toctree-l3"><a class="reference internal" href="#depthplanar-and-depthperspective">DepthPlanar and DepthPerspective</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#depthvis">DepthVis</a>
     </li>
@@ -207,6 +207,10 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../playback/">Playing Logs</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../voxel_grid/">Voxel Grid Generator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../event_sim/">Event camera</a>
+                    </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Design</span></p>
                 <ul>
@@ -230,6 +234,8 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
                 <li class="toctree-l2"><a class="" href="https://youtu.be/1oY8Qu5maQQ">AirSim with Pixhawk</a>
                 </li>
@@ -290,6 +296,8 @@
                     <li class="toctree-l1"><a class="reference internal" href="../drone_survey/">Surveying Using Drone</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../orbit/">Orbit Trajectory</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://youtu.be/Bp86WiLUC80">Importing a custom multirotor mesh</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Misc</span></p>
@@ -402,7 +410,7 @@ responses = client.simGetImages([
     # uncompressed RGB array bytes
     airsim.ImageRequest(1, airsim.ImageType.Scene, False, False),
     # floating point uncompressed image
-    airsim.ImageRequest(1, airsim.ImageType.DepthPlanner, True)])
+    airsim.ImageRequest(1, airsim.ImageType.DepthPlanar, True)])
 
  # do something with response which contains image data, pose, timestamp etc</code></pre>
 <h4 id="using-airsim-images-with-numpy">Using AirSim Images with NumPy<a class="headerlink" href="#using-airsim-images-with-numpy" title="Permanent link">#</a></h4>
@@ -431,6 +439,9 @@ airsim.write_png(os.path.normpath(filename + '.png'), img_rgb) </code></pre>
     <pre class="highlight"><code>airsim.list_to_2d_float_array(response.image_data_float, response.width, response.height)</code></pre>
     You can also save float array to .pfm file (Portable Float Map format) using <code>airsim.write_pfm()</code> function.</p>
 </li>
+<li>
+<p>If you are looking to query position and orientation information in sync with a call to one of the image APIs, you can use <code>client.simPause(True)</code> and <code>client.simPause(False)</code> to pause the simulation while calling the image API and querying the desired physics state, ensuring that the physics state remains the same immediately after the image API call.</p>
+</li>
 </ul>
 <h3 id="c_1">C++<a class="headerlink" href="#c_1" title="Permanent link">#</a></h3>
 <pre class="highlight"><code class="language-cpp">int getStereoAndDepthImages() 
@@ -452,7 +463,7 @@ airsim.write_png(os.path.normpath(filename + '.png'), img_rgb) </code></pre>
         //uncompressed RGB array bytes
         ImageRequest("1", ImageType::Scene, false, false),       
         //floating point uncompressed image  
-        ImageRequest("1", ImageType::DepthPlanner, true) 
+        ImageRequest("1", ImageType::DepthPlanar, true) 
     };
 
     const std::vector&lt;ImageResponse&gt;&amp; response = client.simGetImages(request);
@@ -487,7 +498,7 @@ airsim.write_png(os.path.normpath(filename + '.png'), img_rgb) </code></pre>
 <h2 id="camera-apis">Camera APIs<a class="headerlink" href="#camera-apis" title="Permanent link">#</a></h2>
 <p>The <code>simGetCameraInfo</code> returns the pose (in world frame, NED coordinates, SI units) and FOV (in degrees) for the specified camera. Please see <a href="https://github.com/Microsoft/AirSim/tree/master/PythonClient//computer_vision/cv_mode.py">example usage</a>.</p>
 <p>The <code>simSetCameraPose</code> sets the pose for the specified camera while taking an input pose as a combination of relative position and a quaternion in NED frame. The handy <code>airsim.to_quaternion()</code> function allows to convert pitch, roll, yaw to quaternion. For example, to set camera-0 to 15-degree pitch while maintaining the same position, you can use:
-<pre class="highlight"><code>camera_pose = airsim.Pose(airsim.Vector3r(0, 0, 0), airsim.to_quaternion(0.261799, 0, 0))  #RPY in radians
+<pre class="highlight"><code>camera_pose = airsim.Pose(airsim.Vector3r(0, 0, 0), airsim.to_quaternion(0.261799, 0, 0))  #PRY in radians
 client.simSetCameraPose(0, camera_pose);</code></pre></p>
 <h3 id="gimbal">Gimbal<a class="headerlink" href="#gimbal" title="Permanent link">#</a></h3>
 <p>You can set stabilization for pitch, roll or yaw for any camera <a href="../settings/#gimbal">using settings</a>.</p>
@@ -513,21 +524,21 @@ client.simSetCameraPose(0, camera_pose);</code></pre></p>
 <h2 id="what-does-pixel-values-mean-in-different-image-types">What Does Pixel Values Mean in Different Image Types?<a class="headerlink" href="#what-does-pixel-values-mean-in-different-image-types" title="Permanent link">#</a></h2>
 <h3 id="available-imagetype-values">Available ImageType Values<a class="headerlink" href="#available-imagetype-values" title="Permanent link">#</a></h3>
 <pre class="highlight"><code class="language-cpp">  Scene = 0, 
-  DepthPlanner = 1, 
+  DepthPlanar = 1, 
   DepthPerspective = 2,
   DepthVis = 3, 
   DisparityNormalized = 4,
   Segmentation = 5,
   SurfaceNormals = 6,
   Infrared = 7</code></pre>
-<h3 id="depthplanner-and-depthperspective">DepthPlanner and DepthPerspective<a class="headerlink" href="#depthplanner-and-depthperspective" title="Permanent link">#</a></h3>
-<p>You normally want to retrieve the depth image as float (i.e. set <code>pixels_as_float = true</code>) and specify <code>ImageType = DepthPlanner</code> or <code>ImageType = DepthPerspective</code> in <code>ImageRequest</code>. For <code>ImageType = DepthPlanner</code>, you get depth in camera plan, i.e., all points that are in plan parallel to camera have same depth. For <code>ImageType = DepthPerspective</code>, you get depth from camera using a projection ray that hits that pixel. Depending on your use case, planner depth or perspective depth may be the ground truth image that you want. For example, you may be able to feed perspective depth to ROS package such as <code>depth_image_proc</code> to generate a point cloud. Or planner depth may be more compatible with estimated depth image generated by stereo algorithms such as SGM.</p>
+<h3 id="depthplanar-and-depthperspective">DepthPlanar and DepthPerspective<a class="headerlink" href="#depthplanar-and-depthperspective" title="Permanent link">#</a></h3>
+<p>You normally want to retrieve the depth image as float (i.e. set <code>pixels_as_float = true</code>) and specify <code>ImageType = DepthPlanar</code> or <code>ImageType = DepthPerspective</code> in <code>ImageRequest</code>. For <code>ImageType = DepthPlanar</code>, you get depth in camera plane, i.e., all points that are plane-parallel to the camera have same depth. For <code>ImageType = DepthPerspective</code>, you get depth from camera using a projection ray that hits that pixel. Depending on your use case, planner depth or perspective depth may be the ground truth image that you want. For example, you may be able to feed perspective depth to ROS package such as <code>depth_image_proc</code> to generate a point cloud. Or planner depth may be more compatible with estimated depth image generated by stereo algorithms such as SGM.</p>
 <h3 id="depthvis">DepthVis<a class="headerlink" href="#depthvis" title="Permanent link">#</a></h3>
 <p>When you specify <code>ImageType = DepthVis</code> in <code>ImageRequest</code>, you get an image that helps depth visualization. In this case, each pixel value is interpolated from black to white depending on depth in camera plane in meters. The pixels with pure white means depth of 100m or more while pure black means depth of 0 meters.</p>
 <h3 id="disparitynormalized">DisparityNormalized<a class="headerlink" href="#disparitynormalized" title="Permanent link">#</a></h3>
 <p>You normally want to retrieve disparity image as float (i.e. set <code>pixels_as_float = true</code> and specify <code>ImageType = DisparityNormalized</code> in <code>ImageRequest</code>) in which case each pixel is <code>(Xl - Xr)/Xmax</code>, which is thereby normalized to values between 0 to 1.</p>
 <h3 id="segmentation">Segmentation<a class="headerlink" href="#segmentation" title="Permanent link">#</a></h3>
-<p>When you specify <code>ImageType = Segmentation</code> in <code>ImageRequest</code>, you get an image that gives you ground truth segmentation of the scene. At the startup, AirSim assigns value 0 to 255 to each mesh available in environment. This value is then mapped to a specific color in <a href="https://github.com/Microsoft/AirSim/tree/master/Unreal//Plugins/AirSim/Content/HUDAssets/seg_color_pallet.png">the pallet</a>. The RGB values for each object ID can be found in <a href="../seg_rgbs.txt">this file</a>.</p>
+<p>When you specify <code>ImageType = Segmentation</code> in <code>ImageRequest</code>, you get an image that gives you ground truth segmentation of the scene. At the startup, AirSim assigns value 0 to 255 to each mesh available in environment. This value is then mapped to a specific color in <a href="https://raw.githubusercontent.com/microsoft/AirSim/master/Unreal/Plugins/AirSim/Content/HUDAssets/seg_color_palette.png">the pallet</a>. The RGB values for each object ID can be found in <a href="../seg_rgbs.txt">this file</a>.</p>
 <p>You can assign a specific value (limited to the range 0-255) to a specific mesh using APIs. For example, below Python code sets the object ID for the mesh called "Ground" to 20 in Blocks environment and hence changes its color in Segmentation view:</p>
 <pre class="highlight"><code class="language-python">success = client.simSetSegmentationObjectID("Ground", 20);</code></pre>
 <p>The return value is a boolean type that lets you know if the mesh was found.</p>
@@ -611,6 +622,9 @@ print(np.unique(img_rgb[:,:,2], return_counts=True)) #blue  </code></pre></p>
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
+      <script src="../javascripts/config.js" defer></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
