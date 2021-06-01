@@ -119,11 +119,17 @@
     </li>
     </ul>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -162,6 +168,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -342,6 +352,9 @@
 <p>The new APIs since AirSim 1.2 allows you to specify <code>vehicle_name</code>. This name corresponds to keys in json settings (for example, Car1 or Drone2 above). </p>
 <p><a href="https://github.com/Microsoft/AirSim/tree/master/PythonClient//car/multi_agent_car.py">Example code for cars</a></p>
 <p><a href="https://github.com/Microsoft/AirSim/tree/master/PythonClient//multirotor/multi_agent_drone.py">Example code for multirotors</a></p>
+<p>Using APIs for multi-vehicles requires specifying the <code>vehicle_name</code>, which needs to be hardcoded in the script or requires parsing of the settings file. There's also a simple API <code>listVehicles()</code> which returns a list (vector in C++) of strings containing names of the current vehicles. For example, with the above settings for 2 Cars -</p>
+<pre class="highlight"><code>&gt;&gt;&gt; client.listVehicles()
+['Car1', 'Car2']</code></pre>
 <h3 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">#</a></h3>
 <p><a href="https://youtu.be/35dgcuLuF5M"><img alt="AirSimMultiple Vehicles Demo Video" src="../images/demo_multi_vehicles.png" /></a></p>
               
@@ -364,7 +377,7 @@
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -393,7 +406,6 @@
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>

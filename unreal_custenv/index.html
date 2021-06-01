@@ -129,11 +129,17 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multi_vehicle/">Multiple Vehicles</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../sensors/">Sensors</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../lidar/">LIDAR</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Sensors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../sensors/">Sensors</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../lidar/">LIDAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../distance_sensor/">Distance Sensor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../InfraredCamera/">Infrared Camera</a>
+                </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../airsim_ros_pkgs/">ROS: AirSim ROS Wrapper</a>
                     </li>
@@ -172,6 +178,10 @@
                 <li class="toctree-l2"><a class="reference internal" href="../px4_setup/">PX4 Setup for AirSim</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_sitl/">PX4 in SITL</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_sitl_wsl2/">PX4 SITL with WSL 2</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../px4_lockstep/">PX4 Lockstep</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../px4_multi_vehicle/">PX4 Multi-vehicle in SITL</a>
                 </li>
@@ -365,6 +375,11 @@
 }</code></pre>
 </li>
 <li>
+<p>Edit the <code>Config\DefaultGame.ini</code> to add the following line at the end:</p>
+<pre class="highlight"><code>+MapsToCook=(FilePath="/AirSim/AirSimAssets")</code></pre>
+<p>Doing this forces Unreal to include all necessary AirSim content in packaged builds of your project.</p>
+</li>
+<li>
 <p>Close Visual Studio and the  <code>Unreal Editor</code> and right click the LandscapeMountains.uproject in Windows Explorer and select <code>Generate Visual Studio Project Files</code>.  This step detects all plugins and source files in your Unreal project and generates <code>.sln</code> file for Visual Studio.</p>
 <p><img alt="regen" src="../images/regen_sln.png" /></p>
 <div class="admonition tip">
@@ -447,7 +462,7 @@ as we showed in the <code>LandscapeMountains.uproject</code> above.
   <div role="contentinfo">
     <!-- Copyright etc -->
     
-      <p>Copyright &copy; 2018 Microsoft Research</p>
+      <p>Copyright &copy; 2021 Microsoft Research</p>
     
   </div>
 
@@ -476,7 +491,6 @@ as we showed in the <code>LandscapeMountains.uproject</code> above.
 </div>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
-      <script src="../javascripts/config.js" defer></script>
       <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" defer></script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
       <script src="../search/main.js" defer></script>
