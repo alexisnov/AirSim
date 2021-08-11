@@ -37,6 +37,13 @@ if [ ! -d "./external/rpclib/$RPC_VERSION_FOLDER" ]; then
     exit 1
 fi
 
+# check for jsbsim
+if [ ! -d "./external/jsbsim/jsbsim-1.1.8" ]; then
+    echo "ERROR: new version of AirSim requires newer jsbsim."
+    echo "please run setup.sh first and then run build.sh again"
+    exit 1
+fi
+
 # check for local cmake build created by setup.sh
 if [ -d "./cmake_build" ]; then
     if [ "$(uname)" == "Darwin" ]; then

@@ -179,6 +179,69 @@ IF NOT EXIST AirLib\deps\eigen3 (
 )
 IF NOT EXIST AirLib\deps\eigen3 goto :buildfailed
 
+REM //---------- get JSBSim library ----------
+IF NOT EXIST external\jsbsim mkdir external\jsbsim
+IF NOT EXIST external\jsbsim\jsbsim-1.1.8 (
+	REM //leave some blank lines because powershell shows download banner at top of console
+	ECHO(
+	ECHO(
+	ECHO(
+	ECHO *****************************************************************************************
+	ECHO Downloading jsbsim
+	ECHO *****************************************************************************************
+	@echo on
+	powershell -command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iwr https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.zip -OutFile external\jsbsim.zip }"
+	@echo off
+  REM //remove any previous versions
+	rmdir external\jsbsim /q /s
+
+	powershell -command "& { Expand-Archive -Path external\jsbsim.zip -DestinationPath external\jsbsim }"
+	del external\jsbsim.zip /q
+)
+
+REM //---------- Build jsbsim ------------
+ECHO Starting cmake to build jsbsim...
+IF NOT EXIST external\jsbsim\jsbsim-1.1.8\build mkdir external\jsbsim\jsbsim-1.1.8\build
+cd external\jsbsim\jsbsim-1.1.8\build
+REM cmake -G"Visual Studio 14 2015 Win64" ..
+cmake -G"Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX=\tmp\install ..
+REM cmake --build .
+REM cmake --install . --config Debug
+
+
+if "%buildMode%" == "--Debug" (
+cmake --build . --config Debug
+cmake --install . --config Debug
+) else if "%buildMode%" == "--Release" (
+cmake --build . --config Release
+cmake --install . --config Release
+) else (
+cmake --build . --config Debug
+cmake --install . --config Debug
+cmake --build . --config Release
+cmake --install . --config Release
+)
+
+if ERRORLEVEL 1 goto :buildfailed
+chdir /d %ROOT_DIR%
+
+REM //---------- copy jsbsim binaries and include folder inside AirLib folder ----------
+set JSBSIM_TARGET_LIB=AirLib\deps\jsbsim\lib\x64
+if NOT exist %JSBSIM_TARGET_LIB% mkdir %JSBSIM_TARGET_LIB%
+set JSBSIM_TARGET_INCLUDE=AirLib\deps\jsbsim\include
+if NOT exist %JSBSIM_TARGET_INCLUDE% mkdir %JSBSIM_TARGET_INCLUDE%
+robocopy /MIR \tmp\install\include %JSBSIM_TARGET_INCLUDE%
+REM robocopy /MIR \tmp\install\lib %JSBSIM_TARGET_LIB%
+if "%buildMode%" == "--Debug" (
+robocopy /MIR external\jsbsim\jsbsim-1.1.8\build\src\Debug %JSBSIM_TARGET_LIB%\Debug
+) else if "%buildMode%" == "--Release" (
+robocopy /MIR external\jsbsim\jsbsim-1.1.8\build\src\Release %JSBSIM_TARGET_LIB%\Release
+) else (
+robocopy /MIR external\jsbsim\jsbsim-1.1.8\build\src\Debug %JSBSIM_TARGET_LIB%\Debug
+robocopy /MIR external\jsbsim\jsbsim-1.1.8\build\src\Release %JSBSIM_TARGET_LIB%\Release
+)
+
+rd /s/q \tmp\install
 
 REM //---------- now we have all dependencies to compile AirSim.sln which will also compile MavLinkCom ----------
 if "%buildMode%" == "" (

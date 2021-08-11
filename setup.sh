@@ -138,6 +138,22 @@ if [ ! -d "external/rpclib/rpclib-2.3.0" ]; then
     rm v2.3.0.zip
 fi
 
+# Download jsbsim
+if [ ! -d "external/jsbsim/jsbsim-1.1.8" ]; then
+    echo "*********************************************************************************************"
+    echo "Downloading JSBSim..."
+    echo "*********************************************************************************************"
+
+    wget https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.zip
+
+    # remove previous versions
+    rm -rf "external/jsbsim"
+
+    mkdir -p "external/jsbsim"
+    unzip -q v1.1.8.zip -d external/jsbsim
+    rm v1.1.8.zip
+fi
+
 # Download high-polycount SUV model
 if $downloadHighPolySuv; then
     if [ ! -d "Unreal/Plugins/AirSim/Content/VehicleAdv" ]; then
