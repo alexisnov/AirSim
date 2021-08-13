@@ -23,10 +23,14 @@ void MultirotorPawnSimApi::initialize()
     //setup physics vehicle
     if (physics_engine_name_ == "JSBSim") {
         jsbsim_body = new JSBSimPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment());
+        rotor_count_ = jsbsim_body->wrenchVertexCount();
+        rotor_actuator_info_.assign(rotor_count_, RotorActuatorInfo());
     }
-    multirotor_physics_body_ = std::unique_ptr<MultiRotor>(new MultiRotorPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment()));
-    rotor_count_ = multirotor_physics_body_->wrenchVertexCount();
-    rotor_actuator_info_.assign(rotor_count_, RotorActuatorInfo());
+    else {
+        multirotor_physics_body_ = std::unique_ptr<MultiRotor>(new MultiRotorPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment()));
+        rotor_count_ = multirotor_physics_body_->wrenchVertexCount();
+        rotor_actuator_info_.assign(rotor_count_, RotorActuatorInfo());
+    }
 
     vehicle_api_->setSimulatedGroundTruth(getGroundTruthKinematics(), getGroundTruthEnvironment());
 
@@ -64,22 +68,44 @@ void MultirotorPawnSimApi::updateRenderedState(float dt)
 
     //move collision info from rendering engine to vehicle
     const CollisionInfo& collision_info = getCollisionInfo();
-    multirotor_physics_body_->setCollisionInfo(collision_info);
 
-    last_phys_pose_ = multirotor_physics_body_->getPose();
+    if (physics_engine_name_ == "JSBSim") {
+        jsbsim_body->setCollisionInfo(collision_info);
 
-    collision_response = multirotor_physics_body_->getCollisionResponseInfo();
+        last_phys_pose_ = jsbsim_body->getPose();
 
-    //update rotor poses
-    for (unsigned int i = 0; i < rotor_count_; ++i) {
-        const auto& rotor_output = multirotor_physics_body_->getRotorOutput(i);
-        // update private rotor variable
-        rotor_states_.rotors[i].update(rotor_output.thrust, rotor_output.torque_scaler, rotor_output.speed);
-        RotorActuatorInfo* info = &rotor_actuator_info_[i];
-        info->rotor_speed = rotor_output.speed;
-        info->rotor_direction = static_cast<int>(rotor_output.turning_direction);
-        info->rotor_thrust = rotor_output.thrust;
-        info->rotor_control_filtered = rotor_output.control_signal_filtered;
+        collision_response = jsbsim_body->getCollisionResponseInfo();
+
+        //update rotor poses
+        for (unsigned int i = 0; i < rotor_count_; ++i) {
+            const auto& rotor_output = jsbsim_body->getRotorOutput(i);
+            // update private rotor variable
+            rotor_states_.rotors[i].update(rotor_output.thrust, rotor_output.torque_scaler, rotor_output.speed);
+            RotorActuatorInfo* info = &rotor_actuator_info_[i];
+            info->rotor_speed = rotor_output.speed;
+            info->rotor_direction = static_cast<int>(rotor_output.turning_direction);
+            info->rotor_thrust = rotor_output.thrust;
+            info->rotor_control_filtered = rotor_output.control_signal_filtered;
+        }
+    }
+    else {
+        multirotor_physics_body_->setCollisionInfo(collision_info);
+
+        last_phys_pose_ = multirotor_physics_body_->getPose();
+
+        collision_response = multirotor_physics_body_->getCollisionResponseInfo();
+
+        //update rotor poses
+        for (unsigned int i = 0; i < rotor_count_; ++i) {
+            const auto& rotor_output = multirotor_physics_body_->getRotorOutput(i);
+            // update private rotor variable
+            rotor_states_.rotors[i].update(rotor_output.thrust, rotor_output.torque_scaler, rotor_output.speed);
+            RotorActuatorInfo* info = &rotor_actuator_info_[i];
+            info->rotor_speed = rotor_output.speed;
+            info->rotor_direction = static_cast<int>(rotor_output.turning_direction);
+            info->rotor_thrust = rotor_output.thrust;
+            info->rotor_control_filtered = rotor_output.control_signal_filtered;
+        }
     }
 
     vehicle_api_->getStatusMessages(vehicle_api_messages_);
@@ -135,10 +161,18 @@ void MultirotorPawnSimApi::updateRendering(float dt)
 
 void MultirotorPawnSimApi::setPose(const Pose& pose, bool ignore_collision)
 {
-    multirotor_physics_body_->lock();
-    multirotor_physics_body_->setPose(pose);
-    multirotor_physics_body_->setGrounded(false);
-    multirotor_physics_body_->unlock();
+    if (physics_engine_name_ == "JSBSim") {
+        jsbsim_body->lock();
+        jsbsim_body->setPose(pose);
+        jsbsim_body->setGrounded(false);
+        jsbsim_body->unlock();
+    }
+    else {
+        multirotor_physics_body_->lock();
+        multirotor_physics_body_->setPose(pose);
+        multirotor_physics_body_->setGrounded(false);
+        multirotor_physics_body_->unlock();
+    }
     pending_pose_collisions_ = ignore_collision;
     pending_pose_status_ = PendingPoseStatus::RenderPending;
 }
@@ -149,7 +183,12 @@ void MultirotorPawnSimApi::resetImplementation()
     PawnSimApi::resetImplementation();
 
     vehicle_api_->reset();
-    multirotor_physics_body_->reset();
+    if (physics_engine_name_ == "JSBSim") {
+        jsbsim_body->reset();
+    }
+    else {
+        multirotor_physics_body_->reset();
+    }
     vehicle_api_messages_.clear();
 }
 
@@ -174,7 +213,12 @@ void MultirotorPawnSimApi::reportState(StateReporter& reporter)
 {
     PawnSimApi::reportState(reporter);
 
-    multirotor_physics_body_->reportState(reporter);
+    if (physics_engine_name_ == "JSBSim") {
+        jsbsim_body->reportState(reporter);
+    }
+    else {
+        multirotor_physics_body_->reportState(reporter);
+    }
 }
 
 MultirotorPawnSimApi::UpdatableObject* MultirotorPawnSimApi::getPhysicsBody()

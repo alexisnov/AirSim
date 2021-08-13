@@ -22,7 +22,7 @@ namespace airlib
     {
     public:
         JSBSimPhysicsBody(MultiRotorParams* params, VehicleApiBase* vehicle_api,
-                              Kinematics* kinematics, Environment* environment)
+                          Kinematics* kinematics, Environment* environment)
             : params_(params), vehicle_api_(vehicle_api)
         {
             setName("JSBSimPhysicsBody");
