@@ -3,6 +3,7 @@
 #include "vehicles/multirotor/MultiRotorParamsFactory.hpp"
 #include "UnrealSensors/UnrealSensorFactory.h"
 #include <exception>
+#include <Physics/JSBSimPhysicsBody.hpp>
 
 using namespace msr::airlib;
 
@@ -20,6 +21,9 @@ void MultirotorPawnSimApi::initialize()
     vehicle_params_ = MultiRotorParamsFactory::createConfig(getVehicleSetting(), sensor_factory);
     vehicle_api_ = vehicle_params_->createMultirotorApi();
     //setup physics vehicle
+    if (physics_engine_name_ == "JSBSim") {
+        jsbsim_body = new JSBSimPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment());
+    }
     multirotor_physics_body_ = std::unique_ptr<MultiRotor>(new MultiRotorPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment()));
     rotor_count_ = multirotor_physics_body_->wrenchVertexCount();
     rotor_actuator_info_.assign(rotor_count_, RotorActuatorInfo());
@@ -155,8 +159,13 @@ void MultirotorPawnSimApi::update()
     //environment update for current position
     PawnSimApi::update();
 
-    //update forces on vertices
-    multirotor_physics_body_->update();
+    if (physics_engine_name_ == "JSBSim") {
+        jsbsim_body->update();
+    }
+    else {
+        //update forces on vertices
+        multirotor_physics_body_->update();
+    }
 
     //update to controller must be done after kinematics have been updated by physics engine
 }
@@ -170,6 +179,11 @@ void MultirotorPawnSimApi::reportState(StateReporter& reporter)
 
 MultirotorPawnSimApi::UpdatableObject* MultirotorPawnSimApi::getPhysicsBody()
 {
-    return multirotor_physics_body_->getPhysicsBody();
+    if (physics_engine_name_ == "JSBSim") {
+        return jsbsim_body->getPhysicsBody();
+    }
+    else {
+        return multirotor_physics_body_->getPhysicsBody();
+    }
 }
 //*** End: UpdatableState implementation ***//

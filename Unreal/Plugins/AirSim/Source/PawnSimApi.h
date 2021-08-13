@@ -48,6 +48,7 @@ public: //types
         UParticleSystem* collision_display_template;
         msr::airlib::GeoPoint home_geopoint;
         std::string vehicle_name;
+        std::string physics_engine_name;
 
         Params()
         {
@@ -56,7 +57,7 @@ public: //types
         Params(APawn* pawn_val, const NedTransform* global_transform_val, PawnEvents* pawn_events_val,
                const common_utils::UniqueValueMap<std::string, APIPCamera*>& cameras_val, UClass* pip_camera_class_val,
                UParticleSystem* collision_display_template_val, const msr::airlib::GeoPoint& home_geopoint_val,
-               const std::string& vehicle_name_val)
+               const std::string& vehicle_name_val, const std::string& physics_engine_name_val)
             : pawn(pawn_val)
             , global_transform(global_transform_val)
             , pawn_events(pawn_events_val)
@@ -65,6 +66,7 @@ public: //types
             , collision_display_template(collision_display_template_val)
             , home_geopoint(home_geopoint_val)
             , vehicle_name(vehicle_name_val)
+            , physics_engine_name(physics_engine_name_val)
         {
         }
     };
@@ -102,6 +104,7 @@ protected: //additional interface for derived class
     virtual msr::airlib::VehicleApiBase* getVehicleApiBase() const;
     msr::airlib::Kinematics* getKinematics();
     msr::airlib::Environment* getEnvironment();
+    std::string physics_engine_name_;
 
 public: //Unreal specific methods
     PawnSimApi(const Params& params);

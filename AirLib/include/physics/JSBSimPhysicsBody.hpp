@@ -1,269 +1,231 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//#ifndef airsim_core_PhysicsBody_hpp
-//#define airsim_core_PhysicsBody_hpp
+#ifndef msr_airlib_JSBSimPhysicsBody_hpp
+#define msr_airlib_JSBSimPhysicsBody_hpp
 
 #include "common/Common.hpp"
-#include "common/UpdatableObject.hpp"
-#include "PhysicsBodyVertex.hpp"
 #include "common/CommonStructs.hpp"
-#include "Kinematics.hpp"
-#include "Environment.hpp"
-#include <unordered_set>
-#include <exception>
+#include "vehicles/multirotor/RotorActuator.hpp"
+#include "api/VehicleApiBase.hpp"
+#include "api/VehicleSimApiBase.hpp"
+#include "vehicles/multirotor/MultiRotorParams.hpp"
+#include <vector>
+#include "physics/PhysicsBody.hpp"
 
-//namespace msr
-//{
-//namespace airlib
-//{
-//
-//    class JSBSimPhysicsBody : public PhysicsBody
-//    {
-//    public: //interface
-//        virtual real_T getRestitution() const = 0;
-//        virtual real_T getFriction() const = 0;
-//
-//        //derived class may return covariant type
-//        virtual uint wrenchVertexCount() const
-//        {
-//            return 0;
-//        }
-//        virtual PhysicsBodyVertex& getWrenchVertex(uint index)
-//        {
-//            unused(index);
-//            throw std::out_of_range("no physics vertex are available");
-//        }
-//        virtual const PhysicsBodyVertex& getWrenchVertex(uint index) const
-//        {
-//            unused(index);
-//            throw std::out_of_range("no physics vertex are available");
-//        }
-//
-//        virtual uint dragVertexCount() const
-//        {
-//            return 0;
-//        }
-//        virtual PhysicsBodyVertex& getDragVertex(uint index)
-//        {
-//            unused(index);
-//            throw std::out_of_range("no physics vertex are available");
-//        }
-//        virtual const PhysicsBodyVertex& getDragVertex(uint index) const
-//        {
-//            unused(index);
-//            throw std::out_of_range("no physics vertex are available");
-//        }
-//        virtual void setCollisionInfo(const CollisionInfo& collision_info)
-//        {
-//            collision_info_ = collision_info;
-//        }
-//
-//        virtual void updateKinematics(const Kinematics::State& state)
-//        {
-//            if (VectorMath::hasNan(state.twist.linear)) {
-//                //Utils::DebugBreak();
-//                Utils::log("Linear velocity had NaN!", Utils::kLogLevelError);
-//            }
-//
-//            kinematics_->setState(state);
-//            kinematics_->update();
-//        }
-//        /**
-//     * Update kinematics without a state
-//     */
-//        virtual void updateKinematics()
-//        {
-//            kinematics_->update();
-//        }
-//
-//    public: //methods
-//        //constructors
-//        JSBSimPhysicsBody()
-//        {
-//            //allow default constructor with later call for initialize
-//        }
-//        JSBSimPhysicsBody(real_T mass, const Matrix3x3r& inertia, Kinematics* kinematics, Environment* environment)
-//        {
-//            initialize(mass, inertia, kinematics, environment);
-//        }
-//        void initialize(real_T mass, const Matrix3x3r& inertia, Kinematics* kinematics, Environment* environment)
-//        {
-//            mass_ = mass;
-//            mass_inv_ = 1.0f / mass;
-//            inertia_ = inertia;
-//            inertia_inv_ = inertia_.inverse();
-//            environment_ = environment;
-//            environment_->setParent(this);
-//            kinematics_ = kinematics;
-//            kinematics_->setParent(this);
-//        }
-//
-//        //enable physics body detection
-//        virtual UpdatableObject* getPhysicsBody() override
-//        {
-//            return this;
-//        }
-//
-//        //*** Start: UpdatableState implementation ***//
-//        virtual void resetImplementation() override
-//        {
-//            if (environment_)
-//                environment_->reset();
-//            wrench_ = Wrench::zero();
-//            collision_info_ = CollisionInfo();
-//            collision_response_ = CollisionResponse();
-//            grounded_ = false;
-//
-//            //update individual vertices
-//            for (uint vertex_index = 0; vertex_index < wrenchVertexCount(); ++vertex_index) {
-//                getWrenchVertex(vertex_index).reset();
-//            }
-//            for (uint vertex_index = 0; vertex_index < dragVertexCount(); ++vertex_index) {
-//                getDragVertex(vertex_index).reset();
-//            }
-//        }
-//
-//        virtual void update() override
-//        {
-//            UpdatableObject::update();
-//
-//            //update individual vertices - each vertex takes control signal as input and
-//            //produces force and thrust as output
-//            for (uint vertex_index = 0; vertex_index < wrenchVertexCount(); ++vertex_index) {
-//                getWrenchVertex(vertex_index).update();
-//            }
-//            for (uint vertex_index = 0; vertex_index < dragVertexCount(); ++vertex_index) {
-//                getDragVertex(vertex_index).update();
-//            }
-//        }
-//
-//        virtual void reportState(StateReporter& reporter) override
-//        {
-//            //call base
-//            UpdatableObject::reportState(reporter);
-//
-//            reporter.writeHeading("Kinematics");
-//        }
-//        //*** End: UpdatableState implementation ***//
-//
-//        //getters
-//        real_T getMass() const
-//        {
-//            return mass_;
-//        }
-//        real_T getMassInv() const
-//        {
-//            return mass_inv_;
-//        }
-//        const Matrix3x3r& getInertia() const
-//        {
-//            return inertia_;
-//        }
-//        const Matrix3x3r& getInertiaInv() const
-//        {
-//            return inertia_inv_;
-//        }
-//
-//        const Pose& getPose() const
-//        {
-//            return kinematics_->getPose();
-//        }
-//        void setPose(const Pose& pose)
-//        {
-//            return kinematics_->setPose(pose);
-//        }
-//        const Twist& getTwist() const
-//        {
-//            return kinematics_->getTwist();
-//        }
-//        void setTwist(const Twist& twist)
-//        {
-//            return kinematics_->setTwist(twist);
-//        }
-//
-//        const Kinematics::State& getKinematics() const
-//        {
-//            return kinematics_->getState();
-//        }
-//
-//        const Kinematics::State& getInitialKinematics() const
-//        {
-//            return kinematics_->getInitialState();
-//        }
-//        const Environment& getEnvironment() const
-//        {
-//            return *environment_;
-//        }
-//        Environment& getEnvironment()
-//        {
-//            return *environment_;
-//        }
-//        bool hasEnvironment() const
-//        {
-//            return environment_ != nullptr;
-//        }
-//        const Wrench& getWrench() const
-//        {
-//            return wrench_;
-//        }
-//        void setWrench(const Wrench& wrench)
-//        {
-//            wrench_ = wrench;
-//        }
-//        const CollisionInfo& getCollisionInfo() const
-//        {
-//            return collision_info_;
-//        }
-//
-//        const CollisionResponse& getCollisionResponseInfo() const
-//        {
-//            return collision_response_;
-//        }
-//        CollisionResponse& getCollisionResponseInfo()
-//        {
-//            return collision_response_;
-//        }
-//
-//        bool isGrounded() const
-//        {
-//            return grounded_;
-//        }
-//        void setGrounded(bool grounded)
-//        {
-//            grounded_ = grounded;
-//        }
-//
-//        void lock()
-//        {
-//            mutex_.lock();
-//        }
-//
-//        void unlock()
-//        {
-//            mutex_.unlock();
-//        }
-//
-//    public:
-//        //for use in physics engine: //TODO: use getter/setter or friend method?
-//        TTimePoint last_kinematics_time;
-//
-//    private:
-//        real_T mass_, mass_inv_;
-//        Matrix3x3r inertia_, inertia_inv_;
-//
-//        Kinematics* kinematics_ = nullptr;
-//        Environment* environment_ = nullptr;
-//
-//        //force is in world frame but torque is not
-//        Wrench wrench_;
-//
-//        CollisionInfo collision_info_;
-//        CollisionResponse collision_response_;
-//
-//        bool grounded_ = false;
-//        std::mutex mutex_;
-//    };
-//}
-//} //namespace
-//#endif
+namespace msr
+{
+namespace airlib
+{
+
+    class JSBSimPhysicsBody : public PhysicsBody
+    {
+    public:
+        JSBSimPhysicsBody(MultiRotorParams* params, VehicleApiBase* vehicle_api,
+                              Kinematics* kinematics, Environment* environment)
+            : params_(params), vehicle_api_(vehicle_api)
+        {
+            setName("JSBSimPhysicsBody");
+            vehicle_api_->setParent(this);
+            initialize(kinematics, environment);
+        }
+
+        //*** Start: UpdatableState implementation ***//
+        virtual void resetImplementation() override
+        {
+            //reset rotors, kinematics and environment
+            PhysicsBody::resetImplementation();
+
+            //reset sensors last after their ground truth has been reset
+            resetSensors();
+        }
+
+        virtual void update() override
+        {
+            //update forces on vertices that we will use next
+            PhysicsBody::update();
+
+            //Note that controller gets updated after kinematics gets updated in updateKinematics
+            //otherwise sensors will have values from previous cycle causing lags which will appear
+            //as crazy jerks whenever commands like velocity is issued
+        }
+        virtual void reportState(StateReporter& reporter) override
+        {
+            //call base
+            PhysicsBody::reportState(reporter);
+
+            reportSensors(*params_, reporter);
+
+            //report rotors
+            for (uint rotor_index = 0; rotor_index < rotors_.size(); ++rotor_index) {
+                reporter.startHeading("", 1);
+                reporter.writeValue("Rotor", rotor_index);
+                reporter.endHeading(false, 1);
+                rotors_.at(rotor_index).reportState(reporter);
+            }
+        }
+        //*** End: UpdatableState implementation ***//
+
+        //Fast Physics engine calls this method to set next kinematics
+        virtual void updateKinematics(const Kinematics::State& kinematics) override
+        {
+            PhysicsBody::updateKinematics(kinematics);
+
+            updateSensorsAndController();
+        }
+
+        //External Physics engine calls this method to keep physics bodies updated and move rotors
+        virtual void updateKinematics() override
+        {
+            PhysicsBody::updateKinematics();
+
+            updateSensorsAndController();
+        }
+
+        void updateSensorsAndController()
+        {
+            updateSensors(*params_, getKinematics(), getEnvironment());
+
+            //update controller which will update actuator control signal
+            vehicle_api_->update();
+
+            //transfer new input values from controller to rotors
+            for (uint rotor_index = 0; rotor_index < rotors_.size(); ++rotor_index) {
+                rotors_.at(rotor_index).setControlSignal(vehicle_api_->getActuation(rotor_index));
+            }
+        }
+
+        //sensor getter
+        const SensorCollection& getSensors() const
+        {
+            return params_->getSensors();
+        }
+
+        //physics body interface
+        virtual uint wrenchVertexCount() const override
+        {
+            return params_->getParams().rotor_count;
+        }
+        virtual PhysicsBodyVertex& getWrenchVertex(uint index) override
+        {
+            return rotors_.at(index);
+        }
+        virtual const PhysicsBodyVertex& getWrenchVertex(uint index) const override
+        {
+            return rotors_.at(index);
+        }
+
+        virtual uint dragVertexCount() const override
+        {
+            return static_cast<uint>(drag_faces_.size());
+        }
+        virtual PhysicsBodyVertex& getDragVertex(uint index) override
+        {
+            return drag_faces_.at(index);
+        }
+        virtual const PhysicsBodyVertex& getDragVertex(uint index) const override
+        {
+            return drag_faces_.at(index);
+        }
+
+        virtual real_T getRestitution() const override
+        {
+            return params_->getParams().restitution;
+        }
+        virtual real_T getFriction() const override
+        {
+            return params_->getParams().friction;
+        }
+
+        RotorActuator::Output getRotorOutput(uint rotor_index) const
+        {
+            return rotors_.at(rotor_index).getOutput();
+        }
+
+        virtual ~JSBSimPhysicsBody() = default;
+
+    private: //methods
+        void initialize(Kinematics* kinematics, Environment* environment)
+        {
+            PhysicsBody::initialize(params_->getParams().mass, params_->getParams().inertia, kinematics, environment);
+
+            createRotors(*params_, rotors_, environment);
+            createDragVertices();
+
+            initSensors(*params_, getKinematics(), getEnvironment());
+        }
+
+        static void createRotors(const MultiRotorParams& params, vector<RotorActuator>& rotors, const Environment* environment)
+        {
+            rotors.clear();
+            //for each rotor pose
+            for (uint rotor_index = 0; rotor_index < params.getParams().rotor_poses.size(); ++rotor_index) {
+                const MultiRotorParams::RotorPose& rotor_pose = params.getParams().rotor_poses.at(rotor_index);
+                rotors.emplace_back(rotor_pose.position, rotor_pose.normal, rotor_pose.direction, params.getParams().rotor_params, environment, rotor_index);
+            }
+        }
+
+        void reportSensors(MultiRotorParams& params, StateReporter& reporter)
+        {
+            params.getSensors().reportState(reporter);
+        }
+
+        void updateSensors(MultiRotorParams& params, const Kinematics::State& state, const Environment& environment)
+        {
+            unused(state);
+            unused(environment);
+            params.getSensors().update();
+        }
+
+        void initSensors(MultiRotorParams& params, const Kinematics::State& state, const Environment& environment)
+        {
+            params.getSensors().initialize(&state, &environment);
+        }
+
+        void resetSensors()
+        {
+            params_->getSensors().reset();
+        }
+
+        void createDragVertices()
+        {
+            const auto& params = params_->getParams();
+
+            //Drone is seen as central body that is connected to propellers via arm. We approximate central body as box of size x, y, z.
+            //The drag depends on area exposed so we also add area of propellers to approximate drag they may introduce due to their area.
+            //while moving along any axis, we find area that will be exposed in that direction
+            real_T propeller_area = M_PIf * params.rotor_params.propeller_diameter * params.rotor_params.propeller_diameter;
+            real_T propeller_xsection = M_PIf * params.rotor_params.propeller_diameter * params.rotor_params.propeller_height;
+
+            real_T top_bottom_area = params.body_box.x() * params.body_box.y();
+            real_T left_right_area = params.body_box.x() * params.body_box.z();
+            real_T front_back_area = params.body_box.y() * params.body_box.z();
+            Vector3r drag_factor_unit = Vector3r(
+                                            front_back_area + rotors_.size() * propeller_xsection,
+                                            left_right_area + rotors_.size() * propeller_xsection,
+                                            top_bottom_area + rotors_.size() * propeller_area) *
+                                        params.linear_drag_coefficient / 2;
+
+            //add six drag vertices representing 6 sides
+            drag_faces_.clear();
+            drag_faces_.emplace_back(Vector3r(0, 0, -params.body_box.z() / 2.0f), Vector3r(0, 0, -1), drag_factor_unit.z());
+            drag_faces_.emplace_back(Vector3r(0, 0, params.body_box.z() / 2.0f), Vector3r(0, 0, 1), drag_factor_unit.z());
+            drag_faces_.emplace_back(Vector3r(0, -params.body_box.y() / 2.0f, 0), Vector3r(0, -1, 0), drag_factor_unit.y());
+            drag_faces_.emplace_back(Vector3r(0, params.body_box.y() / 2.0f, 0), Vector3r(0, 1, 0), drag_factor_unit.y());
+            drag_faces_.emplace_back(Vector3r(-params.body_box.x() / 2.0f, 0, 0), Vector3r(-1, 0, 0), drag_factor_unit.x());
+            drag_faces_.emplace_back(Vector3r(params.body_box.x() / 2.0f, 0, 0), Vector3r(1, 0, 0), drag_factor_unit.x());
+        }
+
+    private: //fields
+        MultiRotorParams* params_;
+
+        //let us be the owner of rotors object
+        vector<RotorActuator> rotors_;
+        vector<PhysicsBodyVertex> drag_faces_;
+
+        std::unique_ptr<Environment> environment_;
+        VehicleApiBase* vehicle_api_;
+    };
+}
+} //namespace
+#endif

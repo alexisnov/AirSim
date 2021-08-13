@@ -41,6 +41,7 @@ public class AirSim : ModuleRules
     private void SetupCompileMode(CompileMode mode, ReadOnlyTargetRules Target)
     {
         LoadAirSimDependency(Target, "MavLinkCom", "MavLinkCom");
+        LoadAirSimDependency(Target, "jsbsim", "JSBSim");
 
         switch (mode)
         {
@@ -88,6 +89,7 @@ public class AirSim : ModuleRules
 
         PublicIncludePaths.Add(Path.Combine(AirLibPath, "include"));
         PublicIncludePaths.Add(Path.Combine(AirLibPath, "deps", "eigen3"));
+        PublicIncludePaths.Add(Path.Combine(AirLibPath, "deps", "jsbsim", "include", "JSBSim"));
         AddOSLibDependencies(Target);
 
         SetupCompileMode(CompileMode.HeaderOnlyWithRpc, Target);

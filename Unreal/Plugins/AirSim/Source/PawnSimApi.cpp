@@ -55,6 +55,8 @@ void PawnSimApi::initialize()
     //add listener for pawn's collision event
     params_.pawn_events->getCollisionSignal().connect_member(this, &PawnSimApi::onCollision);
     params_.pawn_events->getPawnTickSignal().connect_member(this, &PawnSimApi::pawnTick);
+
+    physics_engine_name_ = params_.physics_engine_name;
 }
 
 void PawnSimApi::setStartPosition(const FVector& position, const FRotator& rotator)
