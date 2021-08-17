@@ -12,6 +12,7 @@
 #include "vehicles/multirotor/MultiRotorParams.hpp"
 #include <vector>
 #include "physics/PhysicsBody.hpp"
+#include "JSBSim/FGFDMExec.h"
 
 namespace msr
 {
@@ -42,6 +43,9 @@ namespace airlib
 
         virtual void update() override
         {
+            jsbsim_aircraft->Setdt(delta_t_);
+            jsbsim_aircraft->Run();
+
             //update forces on vertices that we will use next
             PhysicsBody::update();
 
@@ -142,7 +146,27 @@ namespace airlib
             return rotors_.at(rotor_index).getOutput();
         }
 
+        void setModelPath(std::string model_name)
+        {
+            model_name_ = model_name;
+            if (model_name == "") {
+                model_name_ = "c172x";
+            }
+        }
+
         virtual ~JSBSimPhysicsBody() = default;
+
+    protected:
+        void loadJSBSimPaths(std::string model_path)
+        {
+            //SGPath aircraft_path("D:\\GitHubDesktop\\zimmy87\\jonyMarino-AirSim\\external\\jsbsim\\jsbsim-1.1.8\\aircraft");
+            //SGPath engine_path("D:\\GitHubDesktop\\zimmy87\\jonyMarino-AirSim\\external\\jsbsim\\jsbsim-1.1.8\\engine");
+            //SGPath system_path("D:\\GitHubDesktop\\zimmy87\\jonyMarino-AirSim\\external\\jsbsim\\jsbsim-1.1.8\\systems");
+            SGPath aircraft_path("aircraft");
+            SGPath engine_path("engine");
+            SGPath system_path("systems");
+            jsbsim_aircraft->LoadModel(aircraft_path, engine_path, system_path, model_path);
+        }
 
     private: //methods
         void initialize(Kinematics* kinematics, Environment* environment)
@@ -153,6 +177,25 @@ namespace airlib
             createDragVertices();
 
             initSensors(*params_, getKinematics(), getEnvironment());
+
+            jsbsim_aircraft = new JSBSim::FGFDMExec(nullptr, nullptr); // construct JSBSim FGFDMExec class
+            jsbsim_aircraft->SetRootDir(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/"));
+            jsbsim_aircraft->SetAircraftPath(SGPath("aircraft"));
+            jsbsim_aircraft->SetEnginePath(SGPath("engine"));
+            jsbsim_aircraft->SetSystemsPath(SGPath("systems"));
+            //setModelPath("");
+            //loadJSBSimPaths(model_name_);
+            jsbsim_aircraft->LoadScript(SGPath("scripts/c172_elevation_test.xml"));
+            //jsbsim_aircraft->LoadScript(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/scripts/c172_elevation_test.xml"));
+            const SGPath ic_file("/* Insert path to initial condition file */");
+            JSBSim::FGInitialCondition* fgic = jsbsim_aircraft->GetIC();
+            // fgic->Load(ic_file);
+
+            jsbsim_aircraft->Setdt(delta_t_);
+            const bool success = jsbsim_aircraft->RunIC(); // causes sim time to reset to 0.0, returns true if successful
+            if (!success) {
+                std::cout << "JSBSim failed to initialize simulation conditions" << std::endl;
+            }
         }
 
         static void createRotors(const MultiRotorParams& params, vector<RotorActuator>& rotors, const Environment* environment)
@@ -225,6 +268,10 @@ namespace airlib
 
         std::unique_ptr<Environment> environment_;
         VehicleApiBase* vehicle_api_;
+
+        JSBSim::FGFDMExec* jsbsim_aircraft;
+        std::string model_name_;
+        double delta_t_ = 0.0021; // set the simulation update rate, defaults to 480Hz
     };
 }
 } //namespace

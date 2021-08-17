@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <string>
+#include <vector>
 
 namespace simple_flight
 {
@@ -99,7 +100,7 @@ public:
             (*this)[axis] = axis3[axis];
     }
 
-    void setValues(const vector<T>& vals)
+    void setValues(const std::vector<T>& vals)
     {
         (*this)[0] = vals[0];
         (*this)[1] = vals[1];
