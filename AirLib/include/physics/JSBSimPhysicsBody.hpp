@@ -46,6 +46,9 @@ namespace airlib
             jsbsim_aircraft->Setdt(delta_t_);
             jsbsim_aircraft->Run();
 
+            // update kinematics with state from jsbsim
+            copyPoseFromJSBSim();
+
             //update forces on vertices that we will use next
             PhysicsBody::update();
 
@@ -185,7 +188,8 @@ namespace airlib
             jsbsim_aircraft->SetSystemsPath(SGPath("systems"));
             //setModelPath("");
             //loadJSBSimPaths(model_name_);
-            jsbsim_aircraft->LoadScript(SGPath("scripts/c172_elevation_test.xml"));
+            //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_elevation_test.xml"));
+            jsbsim_aircraft->LoadScript(SGPath("scripts/c172_airjsbsim_test.xml"));
             //jsbsim_aircraft->LoadScript(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/scripts/c172_elevation_test.xml"));
             const SGPath ic_file("/* Insert path to initial condition file */");
             JSBSim::FGInitialCondition* fgic = jsbsim_aircraft->GetIC();
@@ -257,6 +261,29 @@ namespace airlib
             drag_faces_.emplace_back(Vector3r(0, params.body_box.y() / 2.0f, 0), Vector3r(0, 1, 0), drag_factor_unit.y());
             drag_faces_.emplace_back(Vector3r(-params.body_box.x() / 2.0f, 0, 0), Vector3r(-1, 0, 0), drag_factor_unit.x());
             drag_faces_.emplace_back(Vector3r(params.body_box.x() / 2.0f, 0, 0), Vector3r(1, 0, 0), drag_factor_unit.x());
+        }
+
+        void copyPoseFromJSBSim()
+        {
+            Kinematics::State currentState = this->getKinematics();
+            Pose currentPose = currentState.pose;
+            Vector3r position = getJSBSimPosition();
+            currentPose.position = position;
+            currentState.pose = currentPose;
+            this->updateKinematics(currentState);
+        }
+
+        Vector3r getJSBSimPosition()
+        {
+            double latitude = 111320 * jsbsim_aircraft->GetPropertyValue("position/lat-geod-deg");
+            double longitude = 40075000 * jsbsim_aircraft->GetPropertyValue("position/long-gc-deg") * cos(jsbsim_aircraft->GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
+            double altitude = jsbsim_aircraft->GetPropertyValue("position/h-sl-ft");
+            return Vector3r(latitude, longitude, -altitude);
+        }
+
+        Vector3r getJSBSimOrientation()
+        {
+            return Vector3r();        
         }
 
     private: //fields
