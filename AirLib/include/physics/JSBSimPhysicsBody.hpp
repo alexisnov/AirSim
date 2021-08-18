@@ -268,7 +268,9 @@ namespace airlib
             Kinematics::State currentState = this->getKinematics();
             Pose currentPose = currentState.pose;
             Vector3r position = getJSBSimPosition();
+            Quaternionr orientation = getJSBSimOrientation();
             currentPose.position = position;
+            currentPose.orientation = orientation;
             currentState.pose = currentPose;
             this->updateKinematics(currentState);
         }
@@ -281,9 +283,12 @@ namespace airlib
             return Vector3r(latitude, longitude, -altitude);
         }
 
-        Vector3r getJSBSimOrientation()
+        Quaternionr getJSBSimOrientation()
         {
-            return Vector3r();        
+            double pitch = jsbsim_aircraft->GetPropertyValue("attitude/pitch-rad");
+            double roll = jsbsim_aircraft->GetPropertyValue("attitude/roll-rad");
+            double yaw = jsbsim_aircraft->GetPropertyValue("attitude/psi-deg") * (M_PI / 180.0);
+            return VectorMath::toQuaternion(pitch, roll, yaw);        
         }
 
     private: //fields
