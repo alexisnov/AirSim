@@ -181,8 +181,12 @@ namespace airlib
 
             initSensors(*params_, getKinematics(), getEnvironment());
 
+            FString RelativePath = FPaths::ProjectDir();
+            FString FullPath = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*RelativePath);
+            std::string ProjectPath(TCHAR_TO_UTF8(*FullPath));
+
             jsbsim_aircraft = new JSBSim::FGFDMExec(nullptr, nullptr); // construct JSBSim FGFDMExec class
-            jsbsim_aircraft->SetRootDir(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/"));
+            jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + "../../../JSBSimConfig"));
             jsbsim_aircraft->SetAircraftPath(SGPath("aircraft"));
             jsbsim_aircraft->SetEnginePath(SGPath("engine"));
             jsbsim_aircraft->SetSystemsPath(SGPath("systems"));
