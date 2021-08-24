@@ -36,14 +36,13 @@ namespace airlib
             PhysicsEngineBase::update();
 
             for (PhysicsBody* body_ptr : *this) {
-                body_ptr->updateKinematics();
                 body_ptr->update();
             }
         }
         virtual void reportState(StateReporter& reporter) override
         {
             for (PhysicsBody* body_ptr : *this) {
-                reporter.writeValue("ExternalPhysicsEngine", true);
+                reporter.writeValue("JSBSimPhysicsEngine", true);
                 reporter.writeValue("Is Grounded", body_ptr->isGrounded());
             }
             //call base
