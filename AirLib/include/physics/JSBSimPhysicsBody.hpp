@@ -351,7 +351,7 @@ namespace airlib
         {
             double latitude = 111320 * model.GetPropertyValue("position/lat-geod-deg");
             double longitude = 40075000 * model.GetPropertyValue("position/long-gc-deg") * cos(model.GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
-            double altitude = model.GetPropertyValue("position/h-sl-ft");
+            double altitude = model.GetPropertyValue("position/h-sl-meters");
             return Vector3r(latitude, longitude, -altitude);
         }
 
