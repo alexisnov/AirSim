@@ -292,14 +292,14 @@ namespace airlib
             drag_faces_.emplace_back(Vector3r(params.body_box.x() / 2.0f, 0, 0), Vector3r(1, 0, 0), drag_factor_unit.x());
         }
 
-        void getKinematicsFromModel(JSBSim::FGFDMExec& model, Kinematics::State& kenematics)
+        void getKinematicsFromModel(JSBSim::FGFDMExec& model, Kinematics::State& kinematics)
         {
-            kenematics.pose.position = getJSBSimPosition(model);
-            kenematics.pose.orientation = getJSBSimOrientation(model);
-            //kenematics.twist.linear = getJSBSimLinearVelocity(model);
-            //kenematics.twist.angular = getJSBSimAngularVelocity(model);
-            //kenematics.accelerations.linear = getJSBSimLinearAcceleration(model);
-            //kenematics.accelerations.angular = getJSBSimAngularAcceleration(model);
+            kinematics.pose.position = getJSBSimPosition(model);
+            kinematics.pose.orientation = getJSBSimOrientation(model);
+            kinematics.twist.linear = getJSBSimLinearVelocity(model);
+            kinematics.twist.angular = getJSBSimAngularVelocity(model);
+            kinematics.accelerations.linear = getJSBSimLinearAcceleration(model);
+            kinematics.accelerations.angular = getJSBSimAngularAcceleration(model);
         }
 
         void restartModel(JSBSim::FGFDMExec& model, Kinematics::State& kenematics)
@@ -310,6 +310,41 @@ namespace airlib
             //setJSBSimAngularVelocity(model,kenematics.twist.angular);
             //setJSBSimLinearAcceleration(model, kenematics.accelerations.linear);
             //setJSBSimAngularAcceleration(model, kenematics.accelerations.angular);
+        }
+
+        Vector3r getJSBSimLinearVelocity(JSBSim::FGFDMExec& model) 
+        {
+            double u = model.GetPropertyValue("velocities/u-fps") * 0.3048;
+            double v = model.GetPropertyValue("velocities/v-fps") * 0.3048;
+            double w = model.GetPropertyValue("velocities/w-fps") * 0.3048;
+
+            return Vector3r(u,v,w);
+        }
+        
+        Vector3r getJSBSimAngularVelocity(JSBSim::FGFDMExec& model) 
+        { 
+            double p = model.GetPropertyValue("velocities/p-rad_sec");
+            double q = model.GetPropertyValue("velocities/q-rad_sec");
+            double r = model.GetPropertyValue("velocities/r-rad_sec");
+
+            return Vector3r(p, q, r);
+        }
+        
+        Vector3r getJSBSimLinearAcceleration(JSBSim::FGFDMExec& model) 
+        {
+            double u = model.GetPropertyValue("accelerations/udot-ft_sec2") * 0.3048;
+            double v = model.GetPropertyValue("accelerations/vdot-ft_sec2") * 0.3048;
+            double w = model.GetPropertyValue("accelerations/wdot-ft_sec2") * 0.3048;
+
+            return Vector3r(u, v, w);
+        }
+        Vector3r getJSBSimAngularAcceleration(JSBSim::FGFDMExec& model) 
+        {
+            double p = model.GetPropertyValue("accelerations/pdot-rad_sec2");
+            double q = model.GetPropertyValue("accelerations/pdot-rad_sec2");
+            double r = model.GetPropertyValue("accelerations/pdot-rad_sec2");
+
+            return Vector3r(p, q, r);
         }
 
         Vector3r getJSBSimPosition(JSBSim::FGFDMExec& model)
