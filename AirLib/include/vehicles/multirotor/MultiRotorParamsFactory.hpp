@@ -33,6 +33,9 @@ namespace airlib
             else if (vehicle_setting->vehicle_type == AirSimSettings::kVehicleTypeArduCopter) {
                 config.reset(new ArduCopterParams(*static_cast<const AirSimSettings::MavLinkVehicleSetting*>(vehicle_setting), sensor_factory));
             }
+            else if (vehicle_setting->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
+                config.reset(new SimpleFlightQuadXParams(vehicle_setting, sensor_factory));
+            }
             else if (vehicle_setting->vehicle_type == "" || //default config
                      vehicle_setting->vehicle_type == AirSimSettings::kVehicleTypeSimpleFlight) {
                 config.reset(new SimpleFlightQuadXParams(vehicle_setting, sensor_factory));

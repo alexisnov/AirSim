@@ -22,7 +22,7 @@ void MultirotorPawnSimApi::initialize()
     vehicle_api_ = vehicle_params_->createMultirotorApi();
     //setup physics vehicle
     if (physics_engine_name_ == "JSBSim") {
-        jsbsim_body = new JSBSimPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment());
+        jsbsim_body = new JSBSimPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment(), getVehicleSetting());
         rotor_count_ = jsbsim_body->wrenchVertexCount();
         rotor_actuator_info_.assign(rotor_count_, RotorActuatorInfo());
     }

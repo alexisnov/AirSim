@@ -35,6 +35,7 @@ namespace airlib
         static constexpr char const* kVehicleTypePhysXCar = "physxcar";
         static constexpr char const* kVehicleTypeArduRover = "ardurover";
         static constexpr char const* kVehicleTypeComputerVision = "computervision";
+        static constexpr char const* kVehicleTypeJSBSim = "jsbsim";
 
         static constexpr char const* kVehicleInertialFrame = "VehicleInertialFrame";
         static constexpr char const* kSensorLocalFrame = "SensorLocalFrame";
@@ -331,6 +332,18 @@ namespace airlib
         struct MavLinkVehicleSetting : public VehicleSetting
         {
             MavLinkConnectionInfo connection_info;
+        };
+
+        struct JSBSimSetting
+        {
+            std::string root_dir = "";
+            std::string model_path = "";
+            std::string script_path = "";
+        };
+
+        struct JSBSimVehicleSetting : public VehicleSetting
+        {
+            JSBSimSetting jsbsim_setting;
         };
 
         struct SegmentationSetting
@@ -787,6 +800,20 @@ namespace airlib
             return vehicle_setting_p;
         }
 
+        static std::unique_ptr<VehicleSetting> createJSBSimVehicleSetting(const Settings& settings_json)
+        {
+            //these settings_json are expected in same section, not in another child
+            std::unique_ptr<VehicleSetting> vehicle_setting_p = std::unique_ptr<VehicleSetting>(new JSBSimVehicleSetting());
+            JSBSimVehicleSetting* vehicle_setting = static_cast<JSBSimVehicleSetting*>(vehicle_setting_p.get());
+
+            JSBSimSetting& jsbsim_setting = vehicle_setting->jsbsim_setting;
+            jsbsim_setting.root_dir = settings_json.getString("JSBSimRootDir", jsbsim_setting.root_dir);
+            jsbsim_setting.model_path = settings_json.getString("JSBSimModelPath", jsbsim_setting.model_path);
+            jsbsim_setting.script_path = settings_json.getString("JSBSimScriptPath", jsbsim_setting.script_path);
+
+            return vehicle_setting_p;
+        }
+
         static std::unique_ptr<VehicleSetting> createVehicleSetting(const std::string& simmode_name, const Settings& settings_json,
                                                                     const std::string vehicle_name,
                                                                     std::map<std::string, std::shared_ptr<SensorSetting>>& sensor_defaults)
@@ -796,6 +823,8 @@ namespace airlib
             std::unique_ptr<VehicleSetting> vehicle_setting;
             if (vehicle_type == kVehicleTypePX4 || vehicle_type == kVehicleTypeArduCopterSolo || vehicle_type == kVehicleTypeArduCopter || vehicle_type == kVehicleTypeArduRover)
                 vehicle_setting = createMavLinkVehicleSetting(settings_json);
+            else if (vehicle_type == kVehicleTypeJSBSim)
+                vehicle_setting = createJSBSimVehicleSetting(settings_json);
             //for everything else we don't need derived class yet
             else {
                 vehicle_setting = std::unique_ptr<VehicleSetting>(new VehicleSetting());

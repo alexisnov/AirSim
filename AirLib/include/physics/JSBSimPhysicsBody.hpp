@@ -13,7 +13,9 @@
 #include <vector>
 #include "physics/PhysicsBody.hpp"
 #include "JSBSim/FGFDMExec.h"
+#include "JSBSim/initialization/FGInitialCondition.h"
 #include "common/Common.hpp"
+#include "common/AirSimSettings.hpp"
 
 namespace msr
 {
@@ -24,11 +26,12 @@ namespace airlib
     {
     public:
         JSBSimPhysicsBody(MultiRotorParams* params, VehicleApiBase* vehicle_api,
-                          Kinematics* kinematics, Environment* environment)
+                          Kinematics* kinematics, Environment* environment, const AirSimSettings::VehicleSetting* vehicle_settings)
             : params_(params), vehicle_api_(vehicle_api)
         {
             setName("JSBSimPhysicsBody");
             vehicle_api_->setParent(this);
+            vehicle_settings_ = vehicle_settings;
             initialize(kinematics, environment);
         }
 
@@ -211,17 +214,20 @@ namespace airlib
             std::string ProjectPath(TCHAR_TO_UTF8(*FullPath));
 
             jsbsim_aircraft = new JSBSim::FGFDMExec(nullptr, nullptr); // construct JSBSim FGFDMExec class
-            jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + "../../../JSBSimConfig"));
+            //jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + "../../../JSBSimConfig"));
+            jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + ((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.root_dir));
             jsbsim_aircraft->SetAircraftPath(SGPath("aircraft"));
             jsbsim_aircraft->SetEnginePath(SGPath("engine"));
             jsbsim_aircraft->SetSystemsPath(SGPath("systems"));
-            //setModelPath("");
+            setModelPath(((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.model_path);
             //loadJSBSimPaths(model_name_);
             //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_elevation_test.xml"));
-            jsbsim_aircraft->LoadScript(SGPath("scripts/c172_airjsbsim_test.xml"));
+            //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_airjsbsim_test.xml"));
+            jsbsim_aircraft->LoadScript(SGPath(((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.script_path));
             //jsbsim_aircraft->LoadScript(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/scripts/c172_elevation_test.xml"));
             const SGPath ic_file("/* Insert path to initial condition file */");
             JSBSim::FGInitialCondition* fgic = jsbsim_aircraft->GetIC();
+            setICPose(fgic);
             // fgic->Load(ic_file);
 
             jsbsim_aircraft->Setdt(delta_t_);
@@ -318,7 +324,7 @@ namespace airlib
             double v = model.GetPropertyValue("velocities/v-fps") * 0.3048;
             double w = model.GetPropertyValue("velocities/w-fps") * 0.3048;
 
-            return Vector3r(u,v,w);
+            return Vector3r(u, v, w);
         }
         
         Vector3r getJSBSimAngularVelocity(JSBSim::FGFDMExec& model) 
@@ -369,15 +375,13 @@ namespace airlib
             nextModel.Setdt(delta_t_); // shouldn't be using dt?
             nextModel.Run();
 
-            getKinematicsFromModel(nextModel,next);
+            getKinematicsFromModel(nextModel, next);
 
         }
 
-
-
-               //return value indicates if collision response was generated
+        //return value indicates if collision response was generated
         bool getNextKinematicsOnCollision(TTimeDelta dt, const CollisionInfo& collision_info,
-                                                 const Kinematics::State& current, Kinematics::State& next, bool enable_ground_lock)
+                                          const Kinematics::State& current, Kinematics::State& next, bool enable_ground_lock)
         {
             /************************* Collision response ************************/
             const real_T dt_real = static_cast<real_T>(dt);
@@ -512,6 +516,28 @@ namespace airlib
                 ++collision_response.collision_count_non_resting;
         }
 
+        void setICPose(JSBSim::FGInitialCondition* fgic)
+        {
+            Pose pose = this->getKinematics().pose;
+            Vector3r position = pose.position;
+            Quaternionr orientation = pose.orientation;
+            float pitch, roll, yaw;
+            VectorMath::toEulerianAngle(orientation, pitch, roll, yaw);
+
+            // Set position
+            fgic->SetAltitudeASLFtIC((-position.z() * meters_to_ft_) + 10.0); // need to offset initial position because of bug in JSBSim when altitude = 0
+            //fgic->SetAltitudeASLFtIC(10.0);
+            double latitude = position.x() / 111320;
+            fgic->SetGeodLatitudeDegIC(latitude);
+            // 40075000 * model.GetPropertyValue("position/long-gc-deg") * cos(model.GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
+            fgic->SetLongitudeDegIC(position.y() / (40075000 * cos(latitude) * (M_PI / 180.0) / 360));
+
+            // Set orientation
+            fgic->SetPhiDegIC(roll * rad_to_deg_);
+            fgic->SetThetaDegIC(pitch * rad_to_deg_);
+            fgic->SetPsiDegIC(yaw * rad_to_deg_);
+        }
+
     private: //fields
         MultiRotorParams* params_;
 
@@ -525,10 +551,14 @@ namespace airlib
         JSBSim::FGFDMExec* jsbsim_aircraft;
         std::string model_name_;
         double delta_t_ = 0.0021; // set the simulation update rate, defaults to 480Hz
+
         static constexpr float kRestingVelocityMax = 0.1f;
         static constexpr float kAxisTolerance = 0.25f;
         static constexpr uint kCollisionResponseCycles = 1;
 
+        const AirSimSettings::VehicleSetting* vehicle_settings_;
+        const double meters_to_ft_ = 3.28084;
+        const double rad_to_deg_ = (180.0 / M_PI);
     };
 }
 } //namespace
