@@ -65,7 +65,7 @@ namespace airlib
             //if collision was already responded then do not respond to it until we get updated information
             if (this->isGrounded() || (collision_info.has_collided && collision_response.collision_time_stamp != collision_info.time_stamp)) {
                 bool enable_ground_lock_ = false;
-                getNextKinematicsOnCollision(dt, collision_info, current, next, enable_ground_lock_);
+                is_collision_response = getNextKinematicsOnCollision(dt, collision_info, current, next, enable_ground_lock_);
                 updateCollisionResponseInfo(collision_info, next, is_collision_response, collision_response);
                 
             }
@@ -331,7 +331,7 @@ namespace airlib
             kinematics.accelerations.angular = getJSBSimAngularAcceleration(model);
         }
 
-        void restartModel(JSBSim::FGFDMExec& model, Kinematics::State& kenematics)
+        void restartModel(JSBSim::FGFDMExec& model, Kinematics::State& kinematics)
         {
             //setJSBSimPosition(model, kenematics.pose.position);
             //setJSBSimOrientation(model, kenematics.pose.orientation);
@@ -339,6 +339,22 @@ namespace airlib
             //setJSBSimAngularVelocity(model,kenematics.twist.angular);
             //setJSBSimLinearAcceleration(model, kenematics.accelerations.linear);
             //setJSBSimAngularAcceleration(model, kenematics.accelerations.angular);
+            JSBSim::FGInitialCondition* fgic = model.GetIC();
+            setICPose(fgic, kinematics.pose);
+
+            fgic->SetVNorthFpsIC(kinematics.twist.linear.x() * meters_to_ft_);
+            fgic->SetVEastFpsIC(kinematics.twist.linear.y() * meters_to_ft_);
+            fgic->SetVDownFpsIC(kinematics.twist.linear.z() * meters_to_ft_);
+
+            // angular velocity
+            fgic->SetPRadpsIC(kinematics.twist.angular.x());
+            fgic->SetQRadpsIC(kinematics.twist.angular.y());
+            fgic->SetRRadpsIC(kinematics.twist.angular.z());
+
+            model.RunIC();
+
+            // for some use cases, a reset of the model is needed
+            model.ResetToInitialConditions(0);
         }
 
         Vector3r getJSBSimLinearVelocity(JSBSim::FGFDMExec& model) 
