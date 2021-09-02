@@ -185,6 +185,21 @@ namespace airlib
             }
         }
 
+        void setPose(const Pose& pose)
+        {
+            PhysicsBody::setPose(pose);
+
+            const SGPath ic_file("/* Insert path to initial condition file */");
+            JSBSim::FGInitialCondition* fgic = jsbsim_aircraft->GetIC();
+            fgic->SetTerrainElevationFtIC(-10.0);
+            setICPose(fgic, pose);
+
+            const bool success = jsbsim_aircraft->RunIC(); // causes sim time to reset to 0.0, returns true if successful
+            if (!success) {
+                std::cout << "JSBSim failed to initialize simulation conditions" << std::endl;
+            }
+        }
+
         virtual ~JSBSimPhysicsBody() = default;
 
     protected:
@@ -203,6 +218,18 @@ namespace airlib
         void initialize(Kinematics* kinematics, Environment* environment)
         {
             PhysicsBody::initialize(params_->getParams().mass, params_->getParams().inertia, kinematics, environment);
+
+            /* if (this->getKinematics().pose.position.z() == 0) {
+                Kinematics::State state
+                this->updateKinematics
+            }*/
+
+            float pitch, roll, yaw;
+            roll = vehicle_settings_->rotation.roll;
+            pitch = vehicle_settings_->rotation.pitch;
+            yaw = vehicle_settings_->rotation.yaw;
+            Quaternionr orientation = VectorMath::toQuaternion(pitch * deg_to_rad_, roll * deg_to_rad_, yaw * deg_to_rad_);
+            //this->getKinematics().pos = orientation;
 
             createRotors(*params_, rotors_, environment);
             createDragVertices();
@@ -223,18 +250,14 @@ namespace airlib
             //loadJSBSimPaths(model_name_);
             //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_elevation_test.xml"));
             //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_airjsbsim_test.xml"));
-            jsbsim_aircraft->LoadScript(SGPath(((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.script_path));
+            std::string script_path = ((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.script_path;
+            if (script_path != "") {
+                jsbsim_aircraft->LoadScript(SGPath(script_path));
+            }
             //jsbsim_aircraft->LoadScript(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/scripts/c172_elevation_test.xml"));
-            const SGPath ic_file("/* Insert path to initial condition file */");
-            JSBSim::FGInitialCondition* fgic = jsbsim_aircraft->GetIC();
-            setICPose(fgic);
             // fgic->Load(ic_file);
 
             jsbsim_aircraft->Setdt(delta_t_);
-            const bool success = jsbsim_aircraft->RunIC(); // causes sim time to reset to 0.0, returns true if successful
-            if (!success) {
-                std::cout << "JSBSim failed to initialize simulation conditions" << std::endl;
-            }
         }
 
         static void createRotors(const MultiRotorParams& params, vector<RotorActuator>& rotors, const Environment* environment)
@@ -355,10 +378,13 @@ namespace airlib
 
         Vector3r getJSBSimPosition(JSBSim::FGFDMExec& model)
         {
-            double latitude = 111320 * model.GetPropertyValue("position/lat-geod-deg");
-            double longitude = 40075000 * model.GetPropertyValue("position/long-gc-deg") * cos(model.GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
-            double altitude = model.GetPropertyValue("position/h-sl-meters");
-            return Vector3r(latitude, longitude, -altitude);
+            double x = 111320 * model.GetPropertyValue("position/lat-geod-deg");
+            double y = 40075000 * model.GetPropertyValue("position/long-gc-deg") * cos(model.GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
+            double z = model.GetPropertyValue("position/h-sl-meters");
+            /* x = x - vehicle_settings_->position.x();
+            y = y - vehicle_settings_->position.y();
+            z = z - vehicle_settings_->position.z();*/
+            return Vector3r(x, y, -z);
         }
 
         Quaternionr getJSBSimOrientation(JSBSim::FGFDMExec& model)
@@ -516,23 +542,32 @@ namespace airlib
                 ++collision_response.collision_count_non_resting;
         }
 
-        void setICPose(JSBSim::FGInitialCondition* fgic)
+        void setICPose(JSBSim::FGInitialCondition* fgic, Pose pose)
         {
-            Pose pose = this->getKinematics().pose;
+            //Pose pose = this->getKinematics().pose;
             Vector3r position = pose.position;
+            /* float x = position.x() + vehicle_settings_->position.x();
+            float y = position.y() + vehicle_settings_->position.y();
+            float z = position.z() + vehicle_settings_->position.z();*/
+            float x = position.x();
+            float y = position.y();
+            float z = position.z();
             Quaternionr orientation = pose.orientation;
             float pitch, roll, yaw;
             VectorMath::toEulerianAngle(orientation, pitch, roll, yaw);
 
             // Set position
-            fgic->SetAltitudeASLFtIC((-position.z() * meters_to_ft_) + 10.0); // need to offset initial position because of bug in JSBSim when altitude = 0
+            fgic->SetAltitudeASLFtIC((-z * meters_to_ft_)); // need to offset initial position because of bug in JSBSim when altitude = 0
             //fgic->SetAltitudeASLFtIC(10.0);
-            double latitude = position.x() / 111320;
+            double latitude = x / 111320;
             fgic->SetGeodLatitudeDegIC(latitude);
             // 40075000 * model.GetPropertyValue("position/long-gc-deg") * cos(model.GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
-            fgic->SetLongitudeDegIC(position.y() / (40075000 * cos(latitude) * (M_PI / 180.0) / 360));
+            fgic->SetLongitudeDegIC(y / (40075000 * cos(latitude * (M_PI / 180.0)) / 360));
 
             // Set orientation
+            /* fgic->SetPhiDegIC(roll * rad_to_deg_ + vehicle_settings_->rotation.roll);
+            fgic->SetThetaDegIC(pitch * rad_to_deg_ + vehicle_settings_->rotation.pitch);
+            fgic->SetPsiDegIC(yaw * rad_to_deg_ + vehicle_settings_->rotation.yaw);*/
             fgic->SetPhiDegIC(roll * rad_to_deg_);
             fgic->SetThetaDegIC(pitch * rad_to_deg_);
             fgic->SetPsiDegIC(yaw * rad_to_deg_);
@@ -559,6 +594,7 @@ namespace airlib
         const AirSimSettings::VehicleSetting* vehicle_settings_;
         const double meters_to_ft_ = 3.28084;
         const double rad_to_deg_ = (180.0 / M_PI);
+        const double deg_to_rad_ = (M_PI / 180.0);
     };
 }
 } //namespace

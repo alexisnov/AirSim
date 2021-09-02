@@ -21,7 +21,7 @@ void MultirotorPawnSimApi::initialize()
     vehicle_params_ = MultiRotorParamsFactory::createConfig(getVehicleSetting(), sensor_factory);
     vehicle_api_ = vehicle_params_->createMultirotorApi();
     //setup physics vehicle
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body = new JSBSimPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment(), getVehicleSetting());
         rotor_count_ = jsbsim_body->wrenchVertexCount();
         rotor_actuator_info_.assign(rotor_count_, RotorActuatorInfo());
@@ -45,7 +45,9 @@ void MultirotorPawnSimApi::initialize()
     Pose pose = getPose();
     float pitch, roll, yaw;
     VectorMath::toEulerianAngle(pose.orientation, pitch, roll, yaw);
-    pose.orientation = VectorMath::toQuaternion(0, 0, yaw);
+    //pose.orientation = VectorMath::toQuaternion(0, 0, yaw);
+    AirSimSettings::Rotation rotation = getVehicleSetting()->rotation;
+    pose.orientation = VectorMath::toQuaternion(rotation.pitch * (M_PI / 180.0), rotation.roll * (M_PI / 180.0), rotation.yaw * (M_PI / 180.0));
     setPose(pose, false);
 }
 
@@ -69,7 +71,7 @@ void MultirotorPawnSimApi::updateRenderedState(float dt)
     //move collision info from rendering engine to vehicle
     const CollisionInfo& collision_info = getCollisionInfo();
 
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body->setCollisionInfo(collision_info);
 
         last_phys_pose_ = jsbsim_body->getPose();
@@ -161,7 +163,7 @@ void MultirotorPawnSimApi::updateRendering(float dt)
 
 void MultirotorPawnSimApi::setPose(const Pose& pose, bool ignore_collision)
 {
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body->lock();
         jsbsim_body->setPose(pose);
         jsbsim_body->setGrounded(false);
@@ -183,7 +185,7 @@ void MultirotorPawnSimApi::resetImplementation()
     PawnSimApi::resetImplementation();
 
     vehicle_api_->reset();
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body->reset();
     }
     else {
@@ -198,7 +200,7 @@ void MultirotorPawnSimApi::update()
     //environment update for current position
     PawnSimApi::update();
 
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body->update();
     }
     else {
@@ -213,7 +215,7 @@ void MultirotorPawnSimApi::reportState(StateReporter& reporter)
 {
     PawnSimApi::reportState(reporter);
 
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body->reportState(reporter);
     }
     else {
@@ -223,7 +225,7 @@ void MultirotorPawnSimApi::reportState(StateReporter& reporter)
 
 MultirotorPawnSimApi::UpdatableObject* MultirotorPawnSimApi::getPhysicsBody()
 {
-    if (physics_engine_name_ == "JSBSim") {
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         return jsbsim_body->getPhysicsBody();
     }
     else {
