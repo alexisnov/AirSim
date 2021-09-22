@@ -200,6 +200,22 @@ namespace airlib
             }
         }
 
+        double getJSBSimProperty(const std::string& property_name)
+        {
+            // lock may not necessary here, we're not sure if getting property is thread-safe
+            this->lock();
+            double property_value = jsbsim_aircraft->GetPropertyValue(property_name);
+            this->unlock();
+            return property_value;
+        }
+
+        void setJSBSimProperty(const std::string& property_name, double property_value)
+        {
+            this->lock();
+            jsbsim_aircraft->SetPropertyValue(property_name, property_value);
+            this->unlock();
+        }
+
         virtual ~JSBSimPhysicsBody() = default;
 
     protected:

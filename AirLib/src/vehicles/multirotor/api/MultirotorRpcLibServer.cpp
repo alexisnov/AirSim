@@ -137,6 +137,14 @@ namespace airlib
         (static_cast<rpc::server*>(getServer()))->bind("getMultirotorState", [&](const std::string& vehicle_name) -> MultirotorRpcLibAdaptors::MultirotorState {
             return MultirotorRpcLibAdaptors::MultirotorState(getVehicleApi(vehicle_name)->getMultirotorState());
         });
+
+        (static_cast<rpc::server*>(getServer()))->bind("getJSBSimProperty", [&](const std::string& property_name, const std::string& vehicle_name) -> double {
+            return getVehicleSimApi(vehicle_name)->getJSBSimProperty(property_name);
+        });
+
+        (static_cast<rpc::server*>(getServer()))->bind("setJSBSimProperty", [&](const std::string& property_name, double property_value, const std::string& vehicle_name) -> void {
+            getVehicleSimApi(vehicle_name)->setJSBSimProperty(property_name, property_value);
+        });
     }
 
     //required for pimpl

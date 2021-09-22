@@ -339,6 +339,16 @@ void PawnSimApi::reportState(msr::airlib::StateReporter& reporter)
     reporter.writeValue("unreal pos", Vector3r(unrealPosition.X, unrealPosition.Y, unrealPosition.Z));
 }
 
+double PawnSimApi::getJSBSimProperty(const std::string& property_name)
+{
+    return 0;
+}
+
+void PawnSimApi::setJSBSimProperty(const std::string& property_name, double property_value)
+{
+    return;
+}
+
 //void playBack()
 //{
 //if (params_.pawn->GetRootPrimitiveComponent()->IsAnySimulatingPhysics()) {

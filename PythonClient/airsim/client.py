@@ -1432,6 +1432,12 @@ class MultirotorClient(VehicleClient, object):
         """
         return RotorStates.from_msgpack(self.client.call('getRotorStates', vehicle_name))
     getRotorStates.__annotations__ = {'return': RotorStates}
+    
+    def getJSBSimProperty(self, property_name, vehicle_name = ''):
+        return self.client.call('getJSBSimProperty', property_name, vehicle_name)
+        
+    def setJSBSimProperty(self, property_name, property_value, vehicle_name = ''):
+        self.client.call('setJSBSimProperty', property_name, property_value, vehicle_name)
 
 # -----------------------------------  Car APIs ---------------------------------------------
 class CarClient(VehicleClient, object):

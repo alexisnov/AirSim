@@ -232,4 +232,19 @@ MultirotorPawnSimApi::UpdatableObject* MultirotorPawnSimApi::getPhysicsBody()
         return multirotor_physics_body_->getPhysicsBody();
     }
 }
+
+double MultirotorPawnSimApi::getJSBSimProperty(const std::string& property_name)
+{
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
+        return jsbsim_body->getJSBSimProperty(property_name);
+    }
+
+    return NAN;
+}
+void MultirotorPawnSimApi::setJSBSimProperty(const std::string& property_name, double property_value)
+{
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
+        jsbsim_body->setJSBSimProperty(property_name, property_value);
+    }
+}
 //*** End: UpdatableState implementation ***//

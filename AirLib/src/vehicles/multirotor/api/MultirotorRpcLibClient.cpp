@@ -237,6 +237,16 @@ __pragma(warning(disable : 4239))
             static_cast<rpc::client*>(getClient())->call("moveByRC", MultirotorRpcLibAdaptors::RCData(rc_data), vehicle_name);
         }
 
+        double MultirotorRpcLibClient::getJSBSimProperty(const std::string& property_name, const std::string& vehicle_name)
+        {
+            return static_cast<rpc::client*>(getClient())->call("getJSBSimProperty", property_name, vehicle_name).as<double>();
+        }
+
+        void MultirotorRpcLibClient::setJSBSimProperty(const std::string& property_name, double property_value, const std::string& vehicle_name)
+        {
+            static_cast<rpc::client*>(getClient())->call("setJSBSimProperty", property_name, property_value, vehicle_name); 
+        }
+
         //return value of last task. It should be true if task completed without
         //cancellation or timeout
         MultirotorRpcLibClient* MultirotorRpcLibClient::waitOnLastTask(bool* task_result, float timeout_sec)
