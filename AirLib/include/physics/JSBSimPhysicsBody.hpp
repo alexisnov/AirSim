@@ -190,7 +190,7 @@ namespace airlib
             PhysicsBody::setPose(pose);
 
             const SGPath ic_file("/* Insert path to initial condition file */");
-            JSBSim::FGInitialCondition* fgic = jsbsim_aircraft->GetIC();
+            std::shared_ptr<JSBSim::FGInitialCondition> fgic = jsbsim_aircraft->GetIC();
             fgic->SetTerrainElevationFtIC(-10.0);
             setICPose(fgic, pose);
 
@@ -355,7 +355,7 @@ namespace airlib
             //setJSBSimAngularVelocity(model,kenematics.twist.angular);
             //setJSBSimLinearAcceleration(model, kenematics.accelerations.linear);
             //setJSBSimAngularAcceleration(model, kenematics.accelerations.angular);
-            JSBSim::FGInitialCondition* fgic = model.GetIC();
+            std::shared_ptr<JSBSim::FGInitialCondition> fgic = model.GetIC();
             setICPose(fgic, kinematics.pose);
 
             fgic->SetVNorthFpsIC(kinematics.twist.linear.x() * meters_to_ft_);
@@ -574,7 +574,7 @@ namespace airlib
                 ++collision_response.collision_count_non_resting;
         }
 
-        void setICPose(JSBSim::FGInitialCondition* fgic, Pose pose)
+        void setICPose(std::shared_ptr<JSBSim::FGInitialCondition> fgic, Pose pose)
         {
             //Pose pose = this->getKinematics().pose;
             Vector3r position = pose.position;

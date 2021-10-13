@@ -3,7 +3,7 @@
 #include "vehicles/multirotor/MultiRotorParamsFactory.hpp"
 #include "UnrealSensors/UnrealSensorFactory.h"
 #include <exception>
-#include <Physics/JSBSimPhysicsBody.hpp>
+#include <physics/JSBSimPhysicsBody.hpp>
 
 using namespace msr::airlib;
 

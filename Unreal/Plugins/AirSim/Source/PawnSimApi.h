@@ -37,6 +37,7 @@ public: //types
     typedef msr::airlib::AirSimSettings::VehicleSetting VehicleSetting;
     typedef msr::airlib::ImageCaptureBase ImageCaptureBase;
     typedef msr::airlib::DetectionInfo DetectionInfo;
+    typedef msr::airlib::AirSimSettings AirSimSettings;
 
     struct Params
     {
@@ -154,7 +155,6 @@ private: //methods
     void setStartPosition(const FVector& position, const FRotator& rotator);
 
 private: //vars
-    typedef msr::airlib::AirSimSettings AirSimSettings;
     typedef msr::airlib::Kinematics Kinematics;
     typedef msr::airlib::Environment Environment;
 

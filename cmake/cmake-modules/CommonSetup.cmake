@@ -37,6 +37,9 @@ macro(CommonSetup)
     set(RPC_LIB_INCLUDES " ${AIRSIM_ROOT}/external/rpclib/${RPCLIB_VERSION_FOLDER}/include")
     #name of .a file with lib prefix
     set(RPC_LIB rpc)
+    
+    #setup variables for jsbsim
+    set(JSBSIM_VERSION_FOLDER jsbsim-1.2.0)
 
     #what is our build type debug or release?
     string( TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
