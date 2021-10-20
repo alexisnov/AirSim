@@ -241,10 +241,20 @@ double MultirotorPawnSimApi::getJSBSimProperty(const std::string& property_name)
 
     return NAN;
 }
+
 void MultirotorPawnSimApi::setJSBSimProperty(const std::string& property_name, double property_value)
 {
     if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
         jsbsim_body->setJSBSimProperty(property_name, property_value);
     }
+}
+
+double MultirotorPawnSimApi::getJSBSimTime()
+{
+    if (getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeJSBSim) {
+        return jsbsim_body->getJSBSimTime();
+    }
+
+    return NAN;
 }
 //*** End: UpdatableState implementation ***//

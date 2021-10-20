@@ -246,6 +246,11 @@ __pragma(warning(disable : 4239))
         {
             static_cast<rpc::client*>(getClient())->call("setJSBSimProperty", property_name, property_value, vehicle_name); 
         }
+        
+        double MultirotorRpcLibClient::getJSBSimTime(const std::string& vehicle_name)
+        {
+            return static_cast<rpc::client*>(getClient())->call("getJSBSimTime", vehicle_name).as<double>();
+        }
 
         //return value of last task. It should be true if task completed without
         //cancellation or timeout

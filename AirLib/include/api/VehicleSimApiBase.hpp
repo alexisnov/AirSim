@@ -66,6 +66,7 @@ namespace airlib
 
         virtual double getJSBSimProperty(const std::string& property_name) = 0;
         virtual void setJSBSimProperty(const std::string& property_name, double property_value) = 0;
+        virtual double getJSBSimTime() = 0;
 
         //use pointer here because of derived classes for VehicleSetting
         const AirSimSettings::VehicleSetting* getVehicleSetting() const

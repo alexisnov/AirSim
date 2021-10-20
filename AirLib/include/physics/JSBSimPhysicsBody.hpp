@@ -16,6 +16,8 @@
 #include "JSBSim/initialization/FGInitialCondition.h"
 #include "common/Common.hpp"
 #include "common/AirSimSettings.hpp"
+#include "common/LStream.hpp"
+//#include "JSBSim/JSBSim.cpp"
 
 namespace msr
 {
@@ -190,8 +192,8 @@ namespace airlib
             PhysicsBody::setPose(pose);
 
             const SGPath ic_file("/* Insert path to initial condition file */");
-            std::shared_ptr<JSBSim::FGInitialCondition> fgic = jsbsim_aircraft->GetIC();
-            fgic->SetTerrainElevationFtIC(-10.0);
+            JSBSim::FGInitialCondition *fgic = jsbsim_aircraft->GetIC();
+            fgic->SetTerrainElevationFtIC(-5.0);
             setICPose(fgic, pose);
 
             const bool success = jsbsim_aircraft->RunIC(); // causes sim time to reset to 0.0, returns true if successful
@@ -215,24 +217,50 @@ namespace airlib
             jsbsim_aircraft->SetPropertyValue(property_name, property_value);
             this->unlock();
         }
+        
+        double getJSBSimTime()
+        {
+            this->lock();
+            double sim_time = jsbsim_aircraft->GetSimTime();
+            this->unlock();
+            return sim_time;
+        }
 
         virtual ~JSBSimPhysicsBody() = default;
 
     protected:
         void loadJSBSimPaths(std::string model_path)
-        {
+        {   
+            std::cout << "V-DAZI DEBUG #4.1.1" << std::endl;
+            
             //SGPath aircraft_path("D:\\GitHubDesktop\\zimmy87\\jonyMarino-AirSim\\external\\jsbsim\\jsbsim-1.1.8\\aircraft");
             //SGPath engine_path("D:\\GitHubDesktop\\zimmy87\\jonyMarino-AirSim\\external\\jsbsim\\jsbsim-1.1.8\\engine");
             //SGPath system_path("D:\\GitHubDesktop\\zimmy87\\jonyMarino-AirSim\\external\\jsbsim\\jsbsim-1.1.8\\systems");
-            SGPath aircraft_path("aircraft");
-            SGPath engine_path("engine");
-            SGPath system_path("systems");
-            jsbsim_aircraft->LoadModel(aircraft_path, engine_path, system_path, model_path);
+            //SGPath aircraft_path("aircraft");
+            //SGPath engine_path("engine");
+            //SGPath system_path("systems");
+            SGPath aircraft_path("models");
+            SGPath engine_path("models/Rascal110-JSBSim/Engines");
+            SGPath system_path("models/Rascal110-JSBSim/Systems");
+            bool loadReturn = jsbsim_aircraft->LoadModel(aircraft_path, engine_path, system_path, model_path);
+            cout << "LoadModel return: " << loadReturn << std::endl;
+            cout << model_path << std::endl;
+            
+            std::cout << "V-DAZI DEBUG #4.1.2" << std::endl;
         }
 
     private: //methods
         void initialize(Kinematics* kinematics, Environment* environment)
         {
+            //LStream Stream;
+            //std::cout.rdbuf(&Stream); 
+            std::cout << "V-DAZI DEBUG #1" << std::endl;
+            //std::cerr.rdbuf(&Stream);
+            
+            // test JSBSim main method
+            char *argt[] = {(char *)"/home/zimmy/Downloads/jsbsim/build/src/JSBSim", (char *)"--aircraft=Rascal110-JSBSim", (char *)"--initfile=scene/LSZH.xml", (char *)"--root=/home/zimmy/Downloads/jonyMarino/AirSim/JSBSimConfig"};
+            //real_main(4, argt);
+            
             PhysicsBody::initialize(params_->getParams().mass, params_->getParams().inertia, kinematics, environment);
 
             /* if (this->getKinematics().pose.position.z() == 0) {
@@ -255,25 +283,63 @@ namespace airlib
             FString RelativePath = FPaths::ProjectDir();
             FString FullPath = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*RelativePath);
             std::string ProjectPath(TCHAR_TO_UTF8(*FullPath));
+            
+            std::cout << "V-DAZI DEBUG #2" << std::endl;
 
-            jsbsim_aircraft = new JSBSim::FGFDMExec(nullptr, nullptr); // construct JSBSim FGFDMExec class
+            jsbsim_aircraft = new JSBSim::FGFDMExec(); // construct JSBSim FGFDMExec class
             //jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + "../../../JSBSimConfig"));
-            jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + ((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.root_dir));
-            jsbsim_aircraft->SetAircraftPath(SGPath("aircraft"));
-            jsbsim_aircraft->SetEnginePath(SGPath("engine"));
-            jsbsim_aircraft->SetSystemsPath(SGPath("systems"));
-            setModelPath(((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.model_path);
+            //jsbsim_aircraft->SetRootDir(SGPath(ProjectPath + ((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.root_dir));
+            //jsbsim_aircraft->SetRootDir(SGPath(((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.root_dir));
+            jsbsim_aircraft->SetRootDir(SGPath("/home/zimmy/Downloads/jonyMarino/AirSim/Unreal/Environments/Blocks/../../../JSBSimConfig"));
+            cout << jsbsim_aircraft->GetRootDir() << std::endl;
+            jsbsim_aircraft->SetAircraftPath(SGPath("models"));
+            jsbsim_aircraft->SetEnginePath(SGPath("models/Rascal110-JSBSim/Engines"));
+            jsbsim_aircraft->SetSystemsPath(SGPath("models/Rascal110-JSBSim/Systems"));
+            //jsbsim_aircraft->SetAircraftPath(SGPath("models"));
+            //jsbsim_aircraft->SetEnginePath(SGPath("engine"));
+            //jsbsim_aircraft->SetSystemsPath(SGPath("systems"));
+            jsbsim_aircraft->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
+            jsbsim_aircraft->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
             //loadJSBSimPaths(model_name_);
             //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_elevation_test.xml"));
             //jsbsim_aircraft->LoadScript(SGPath("scripts/c172_airjsbsim_test.xml"));
+            
+            std::cout << "V-DAZI DEBUG #3" << std::endl;
+
+            double simulation_rate = 1./120.;
+            if (simulation_rate < 1.0 )
+                jsbsim_aircraft->Setdt(simulation_rate);
+            else
+                jsbsim_aircraft->Setdt(1.0/simulation_rate);
+                
+            std::cout << "V-DAZI DEBUG #4" << std::endl;
+            
             std::string script_path = ((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.script_path;
             if (script_path != "") {
                 jsbsim_aircraft->LoadScript(SGPath(script_path));
+                cout << "script path: " << script_path << std::endl;
             }
+            else {
+                std::cout << "V-DAZI DEBUG #4.1" << std::endl;
+                loadJSBSimPaths(((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.model_path);
+                std::cout << "V-DAZI DEBUG #4.2" << std::endl;
+            }
+            
+            std::cout << "V-DAZI DEBUG #5" << std::endl;
+            
             //jsbsim_aircraft->LoadScript(SGPath("D:/GitHubDesktop/zimmy87/jonyMarino-AirSim/external/jsbsim/jsbsim-1.1.8/scripts/c172_elevation_test.xml"));
-            // fgic->Load(ic_file);
+            std::string ic_path = ((const AirSimSettings::JSBSimVehicleSetting*)vehicle_settings_)->jsbsim_setting.ic_path;
+            if (ic_path != "") {
+                JSBSim::FGInitialCondition *fgic = jsbsim_aircraft->GetIC();
+                const SGPath ic_file(ic_path);
+                fgic->Load(ic_file, true);
+            }
+            
+            std::cout << "V-DAZI DEBUG #6" << std::endl;
 
-            jsbsim_aircraft->Setdt(delta_t_);
+            //jsbsim_aircraft->Setdt(delta_t_);
+            jsbsim_aircraft->Setdt(0.003);
+            jsbsim_aircraft->RunIC();
         }
 
         static void createRotors(const MultiRotorParams& params, vector<RotorActuator>& rotors, const Environment* environment)
@@ -355,7 +421,7 @@ namespace airlib
             //setJSBSimAngularVelocity(model,kenematics.twist.angular);
             //setJSBSimLinearAcceleration(model, kenematics.accelerations.linear);
             //setJSBSimAngularAcceleration(model, kenematics.accelerations.angular);
-            std::shared_ptr<JSBSim::FGInitialCondition> fgic = model.GetIC();
+            JSBSim::FGInitialCondition *fgic = model.GetIC();
             setICPose(fgic, kinematics.pose);
 
             fgic->SetVNorthFpsIC(kinematics.twist.linear.x() * meters_to_ft_);
@@ -430,7 +496,7 @@ namespace airlib
         void getNextKinematicsNoCollision(TTimeDelta dt, Kinematics::State& next, JSBSim::FGFDMExec& nextModel)
         {
 
-            nextModel.Setdt(delta_t_); // shouldn't be using dt?
+            //nextModel.Setdt(delta_t_); // shouldn't be using dt?
             nextModel.Run();
 
             getKinematicsFromModel(nextModel, next);
@@ -574,7 +640,7 @@ namespace airlib
                 ++collision_response.collision_count_non_resting;
         }
 
-        void setICPose(std::shared_ptr<JSBSim::FGInitialCondition> fgic, Pose pose)
+        void setICPose(JSBSim::FGInitialCondition *fgic, Pose pose)
         {
             //Pose pose = this->getKinematics().pose;
             Vector3r position = pose.position;
@@ -627,6 +693,9 @@ namespace airlib
         const double meters_to_ft_ = 3.28084;
         const double rad_to_deg_ = (180.0 / M_PI);
         const double deg_to_rad_ = (M_PI / 180.0);
+        
+        double actual_elapsed_time;
+        double cycle_duration;
     };
 }
 } //namespace

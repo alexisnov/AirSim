@@ -145,6 +145,10 @@ namespace airlib
         (static_cast<rpc::server*>(getServer()))->bind("setJSBSimProperty", [&](const std::string& property_name, double property_value, const std::string& vehicle_name) -> void {
             getVehicleSimApi(vehicle_name)->setJSBSimProperty(property_name, property_value);
         });
+        
+        (static_cast<rpc::server*>(getServer()))->bind("getJSBSimTime", [&](const std::string& vehicle_name) -> double {
+            return getVehicleSimApi(vehicle_name)->getJSBSimTime();
+        });
     }
 
     //required for pimpl

@@ -1438,6 +1438,9 @@ class MultirotorClient(VehicleClient, object):
         
     def setJSBSimProperty(self, property_name, property_value, vehicle_name = ''):
         self.client.call('setJSBSimProperty', property_name, property_value, vehicle_name)
+        
+    def getJSBSimTime(self, vehicle_name = ''):
+        return self.client.call('getJSBSimTime', vehicle_name)
 
 # -----------------------------------  Car APIs ---------------------------------------------
 class CarClient(VehicleClient, object):

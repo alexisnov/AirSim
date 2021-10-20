@@ -101,6 +101,7 @@ public: //implementation of VehicleSimApiBase
 
     virtual double getJSBSimProperty(const std::string& property_name) override;
     virtual void setJSBSimProperty(const std::string& property_name, double property_value) override;
+    virtual double getJSBSimTime() override;
 
 protected: //additional interface for derived class
     virtual void pawnTick(float dt);

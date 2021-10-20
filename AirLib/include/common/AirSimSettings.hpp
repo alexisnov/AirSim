@@ -339,6 +339,7 @@ namespace airlib
             std::string root_dir = "";
             std::string model_path = "";
             std::string script_path = "";
+            std::string ic_path = "";
         };
 
         struct JSBSimVehicleSetting : public VehicleSetting
@@ -810,7 +811,8 @@ namespace airlib
             jsbsim_setting.root_dir = settings_json.getString("JSBSimRootDir", jsbsim_setting.root_dir);
             jsbsim_setting.model_path = settings_json.getString("JSBSimModelPath", jsbsim_setting.model_path);
             jsbsim_setting.script_path = settings_json.getString("JSBSimScriptPath", jsbsim_setting.script_path);
-
+            jsbsim_setting.ic_path = settings_json.getString("JSBSimICPath", jsbsim_setting.ic_path);
+            
             return vehicle_setting_p;
         }
 

@@ -139,23 +139,24 @@ if [ ! -d "external/rpclib/rpclib-2.3.0" ]; then
 fi
 
 # Download jsbsim
-if [ ! -d "external/jsbsim/jsbsim-1.2.0" ]; then
+if [ ! -d "external/jsbsim/jsbsim-1.1.0" ]; then
     echo "*********************************************************************************************"
     echo "Downloading JSBSim..."
     echo "*********************************************************************************************"
 
     # only do one wget
     # wget https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.zip
-    wget https://github.com/JSBSim-Team/jsbsim/archive/d53cb46461c2e47fb87a44b7273e1a8fc86bffdc.zip
-    mv d53cb46461c2e47fb87a44b7273e1a8fc86bffdc.zip v1.2.0.zip
+    # wget https://github.com/JSBSim-Team/jsbsim/archive/d53cb46461c2e47fb87a44b7273e1a8fc86bffdc.zip
+    # mv d53cb46461c2e47fb87a44b7273e1a8fc86bffdc.zip v1.2.0.zip
+    wget https://github.com/JSBSim-Team/jsbsim/archive/refs/tags/v1.1.0.zip
 
     # remove previous versions
     rm -rf "external/jsbsim"
 
     mkdir -p "external/jsbsim"
-    unzip -q v1.2.0.zip -d external/jsbsim
-    mv external/jsbsim/jsbsim-d53cb46461c2e47fb87a44b7273e1a8fc86bffdc external/jsbsim/jsbsim-1.2.0
-    rm v1.2.0.zip
+    unzip -q v1.1.0.zip -d external/jsbsim
+    # mv external/jsbsim/jsbsim-d53cb46461c2e47fb87a44b7273e1a8fc86bffdc external/jsbsim/jsbsim-1.2.0
+    rm v1.1.0.zip
 fi
 
 # Download high-polycount SUV model

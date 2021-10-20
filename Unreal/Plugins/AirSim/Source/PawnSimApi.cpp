@@ -349,6 +349,11 @@ void PawnSimApi::setJSBSimProperty(const std::string& property_name, double prop
     return;
 }
 
+double PawnSimApi::getJSBSimTime()
+{
+    return 0;
+}
+
 //void playBack()
 //{
 //if (params_.pawn->GetRootPrimitiveComponent()->IsAnySimulatingPhysics()) {

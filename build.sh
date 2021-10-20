@@ -38,7 +38,7 @@ if [ ! -d "./external/rpclib/$RPC_VERSION_FOLDER" ]; then
 fi
 
 # check for jsbsim
-if [ ! -d "./external/jsbsim/jsbsim-1.2.0" ]; then
+if [ ! -d "./external/jsbsim/jsbsim-1.1.0" ]; then
     echo "ERROR: new version of AirSim requires newer jsbsim."
     echo "please run setup.sh first and then run build.sh again"
     exit 1
@@ -131,7 +131,7 @@ rsync -a --delete $build_dir/output/lib/ AirLib/lib/x64/$folder_name
 rsync -a --delete external/rpclib/$RPC_VERSION_FOLDER/include AirLib/deps/rpclib
 rsync -a --delete MavLinkCom/include AirLib/deps/MavLinkCom
 rsync -a --delete AirLib Unreal/Plugins/AirSim/Source
-rsync -a --delete --include="*/" --include="*.h" --include="*.hxx" --exclude="*" external/jsbsim/jsbsim-1.2.0/src/ AirLib/deps/jsbsim/include/JSBSim
+rsync -a --delete --include="*/" --include="*.h" --include="*.hxx" --exclude="*" external/jsbsim/jsbsim-1.1.0/src/ AirLib/deps/jsbsim/include/JSBSim
 rm -rf Unreal/Plugins/AirSim/Source/AirLib/src
 
 # Update Blocks project
