@@ -1,5 +1,8 @@
 //...standard class body
 
+#ifndef common_utils_LStream_hpp
+#define common_utils_LStream_hpp
+
 class LStream : public std::stringbuf{
 protected:
     int sync() {
@@ -8,3 +11,5 @@ protected:
         return std::stringbuf::sync();
     }
 };
+
+#endif

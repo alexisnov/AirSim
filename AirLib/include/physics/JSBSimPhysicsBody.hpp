@@ -386,11 +386,16 @@ namespace airlib
 
         Vector3r getJSBSimLinearVelocity(JSBSim::FGFDMExec& model) 
         {
-            double u = model.GetPropertyValue("velocities/u-fps") * 0.3048;
-            double v = model.GetPropertyValue("velocities/v-fps") * 0.3048;
-            double w = model.GetPropertyValue("velocities/w-fps") * 0.3048;
+            //double u = model.GetPropertyValue("velocities/u-fps") * 0.3048;
+            //double v = model.GetPropertyValue("velocities/v-fps") * 0.3048;
+            //double w = model.GetPropertyValue("velocities/w-fps") * 0.3048;
 
-            return Vector3r(u, v, w);
+            //return Vector3r(u, v, w);
+            double n = model.GetPropertyValue("velocities/v-north-fps") * 0.3048;
+            double e = model.GetPropertyValue("velocities/v-east-fps") * 0.3048;
+            double d = model.GetPropertyValue("velocities/v-down-fps") * 0.3048;
+            
+            return Vector3r(n, e, d);
         }
         
         Vector3r getJSBSimAngularVelocity(JSBSim::FGFDMExec& model) 

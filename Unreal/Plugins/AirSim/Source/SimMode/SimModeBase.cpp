@@ -64,6 +64,10 @@ ASimModeBase::ASimModeBase()
     }
     else
         loading_screen_widget_ = nullptr;
+        
+    // redirect all cout to UE_LOG
+    std::cout.rdbuf(&cout_stream); 
+    std::cout << "initialize redirect cout to UE_LOG" << std::endl;
 }
 
 void ASimModeBase::toggleLoadingScreen(bool is_visible)

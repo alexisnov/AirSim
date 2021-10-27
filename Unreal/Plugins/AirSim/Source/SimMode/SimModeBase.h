@@ -16,6 +16,7 @@
 #include "common/StateReporterWrapper.hpp"
 #include "LoadingScreenWidget.h"
 #include "UnrealImageCapture.h"
+#include "common/LStream.hpp"
 #include "SimModeBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLevelLoaded);
@@ -120,6 +121,7 @@ public:
 
     TMap<FString, FAssetData> asset_map;
     TMap<FString, AActor*> scene_object_map;
+    LStream cout_stream;
 
 protected: //must overrides
     typedef msr::airlib::AirSimSettings AirSimSettings;
