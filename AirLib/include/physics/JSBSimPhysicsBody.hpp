@@ -386,11 +386,6 @@ namespace airlib
 
         Vector3r getJSBSimLinearVelocity(JSBSim::FGFDMExec& model) 
         {
-            //double u = model.GetPropertyValue("velocities/u-fps") * 0.3048;
-            //double v = model.GetPropertyValue("velocities/v-fps") * 0.3048;
-            //double w = model.GetPropertyValue("velocities/w-fps") * 0.3048;
-
-            //return Vector3r(u, v, w);
             double n = model.GetPropertyValue("velocities/v-north-fps") * 0.3048;
             double e = model.GetPropertyValue("velocities/v-east-fps") * 0.3048;
             double d = model.GetPropertyValue("velocities/v-down-fps") * 0.3048;
@@ -606,7 +601,6 @@ namespace airlib
             //fgic->SetAltitudeASLFtIC(10.0);
             double latitude = x / 111320;
             fgic->SetGeodLatitudeDegIC(latitude);
-            // 40075000 * model.GetPropertyValue("position/long-gc-deg") * cos(model.GetPropertyValue("position/lat-geod-deg") * (M_PI / 180.0)) / 360;
             fgic->SetLongitudeDegIC(y / (40075000 * cos(latitude * (M_PI / 180.0)) / 360));
 
             // Set orientation
